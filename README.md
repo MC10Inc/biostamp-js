@@ -14,7 +14,7 @@ Build JavaScript-based applications that communicate with BioStamp® 3.0 sensors
 
 ## Getting started
 
-Install the corresponding to your target platform: [biostamp-js-web][13], [biostamp-js-node][14] or [biostamp-js-nordic][15].
+Install the package corresponding to your target platform: [biostamp-js-web][13], [biostamp-js-node][14] or [biostamp-js-nordic][15].
 
 See [Configuring npm for use with GitHub Packages][12] for more information.
 
