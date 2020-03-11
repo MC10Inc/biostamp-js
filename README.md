@@ -182,7 +182,7 @@ sensor.blinkLeds().then(() => {
 
 ### getSurfaceTemperature()
 
-Get the surface temperature in degrees Celcius (+/-1º).
+Get the surface temperature in degrees Celcius.
 
 ``` javascript
 sensor.getSurfaceTemperature().then((degrees) => {
@@ -192,7 +192,7 @@ sensor.getSurfaceTemperature().then((degrees) => {
 
 ### getExternalTemperature()
 
-Get the external (ambient) temperature in degrees Celcius (+/-2º).
+Get the external (ambient) temperature in degrees Celcius.
 
 ``` javascript
 sensor.getExternalTemperature().then((degrees) => {
