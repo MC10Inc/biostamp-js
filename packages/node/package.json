@@ -1,6 +1,6 @@
 {
   "name": "@mc10inc/biostamp-js-node",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Biostamp® 3.0 JavaScript SDK for Node.js",
   "main": "index.js",
   "scripts": {
