@@ -25,7 +25,7 @@ Build JavaScript-based applications that communicate with BioStamp® 3.0 sensors
 
 ## Getting started
 
-Add the following lines to your `.npmrc` file, replacing _TOKEN_ with your GitHub personal access token:
+Add the following lines to your `.npmrc` file, replacing _TOKEN_ with a GitHub personal access token:
 
 ```
 @mc10inc:registry=https://npm.pkg.github.com
