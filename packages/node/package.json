@@ -1,0 +1,30 @@
+{
+  "name": "@mc10inc/biostamp-js-node",
+  "version": "1.0.0",
+  "description": "Biostamp® 3.0 JavaScript SDK for Node.js",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@github.com/mc10inc/biostamp-js.git",
+    "directory": "packages/node"
+  },
+  "author": "MC10, Inc.",
+  "license": "SEE LICENSE IN LICENSE.md",
+  "dependencies": {
+    "@abandonware/noble": "^1.9.2-5",
+    "@mc10inc/biostamp-js-core": "^1.0.3",
+    "yargs": "^15.1.0"
+  },
+  "devDependencies": {
+    "async": "^3.1.0",
+    "install": "^0.13.0",
+    "npm": "^6.13.6"
+  },
+  "bugs": {
+    "url": "https://github.com/mc10inc/biostamp-js/issues"
+  },
+  "homepage": "https://github.com/mc10inc/biostamp-js#readme"
+}

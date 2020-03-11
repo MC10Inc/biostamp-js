@@ -1,0 +1,77 @@
+<html>
+<head>
+
+<title>BioStamp® 3.0</title>
+
+<script src="../sensor.min.js"></script>
+
+<script>
+  let connect = () => {
+    window.BiostampSensor.connect("BRC3", onDisconnect).then((sensor) => {
+      window.sensor = sensor;
+      render();
+    }).catch((error) => {
+      console.info(error.message);
+    });
+  };
+
+  let blink = () => {
+    sensor.blinkLeds();
+  };
+
+  let disconnect = () => {
+    sensor.disconnect();
+  };
+
+  let onDisconnect = () => {
+    sensor = null;
+    render();
+  };
+
+  let render = () => {
+    let buttons = document.querySelectorAll("button");
+    let serial = document.querySelector("#serial");
+
+    buttons[0].disabled = sensor !== null;
+    buttons[1].disabled = sensor === null;
+    buttons[2].disabled = sensor === null;
+
+    serial.innerText = sensor ? sensor.name : "[No sensor]";
+  };
+</script>
+
+<style>
+  * {
+    font-family: Helvetica;
+  }
+
+  body {
+    text-align: center;
+    margin: 3em;
+  }
+
+  button {
+    padding: 0.5em 1em;
+    margin: 0.5em;
+    border-radius: 1em;
+    font-size: 1em;
+  }
+
+  button:disabled {
+    cursor: not-allowed;
+  }
+</style>
+
+</head>
+
+<body>
+  <h1>BioStamp® 3.0</h1>
+
+  <h2>Connected sensor: <span id="serial">[No sensor]</span></h2>
+
+  <button onClick="connect()">Connect</button>
+  <button onClick="blink()" disabled>Blink</button>
+  <button onClick="disconnect()" disabled>Disconnect</button>
+</body>
+
+</html>

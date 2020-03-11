@@ -1,0 +1,17 @@
+let schema = require("./brc3_pb.js");
+
+class BRC3Error extends Error {
+  constructor(code) {
+    let key = Object.keys(schema.ErrorCode).find((key) => schema.ErrorCode[key] === code);
+
+    super(`There was a problem communicating with the sensor (${key}).`);
+
+    this.code = code;
+  }
+}
+
+Object.keys(schema.ErrorCode).forEach((key) => {
+  BRC3Error[key] = schema.ErrorCode[key];
+});
+
+module.exports = BRC3Error;
