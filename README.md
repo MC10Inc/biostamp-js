@@ -21,7 +21,11 @@ Add the following to your `.npmrc` file, replacing _TOKEN_ with your GitHub pers
 //npm.pkg.github.com/:_authToken=TOKEN
 ```
 
-Install the package corresponding to your target platform: [biostamp-js-web][13], [biostamp-js-node][14] or [biostamp-js-nordic][15].
+Then install the package corresponding to your target platform: [biostamp-js-web][13], [biostamp-js-node][14] or [biostamp-js-nordic][15]. For example:
+
+```
+npm install @mc10inc/biostamp-js-node
+```
 
 See [Configuring npm for use with GitHub Packages][12] for more information.
 
