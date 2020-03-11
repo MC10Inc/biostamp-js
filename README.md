@@ -2,6 +2,17 @@
 
 Build JavaScript-based applications that communicate with BioStamp® 3.0 sensors via [Bluetooth Low Energy (BLE)][1].
 
+## Table of Contents
+
+  * [Supported platforms](#supported-platforms)
+  * [Requirements](#requirements)
+  * [Getting started](#getting-started)
+  * [Connecting to a sensor](#connecting-to-a-sensor)
+  * [Issuing sensor commands](#issuing-sensor-commands)
+  * [BiostampSensor](#biostampsensor)
+  * [BiostampRecording](#biostamprecording)
+  * [BiostampError](#biostamperror)
+
 ## Supported platforms
 
   * Chromium-based web browsers ([Google Chrome][2] and [Microsoft Edge][11])
@@ -14,7 +25,7 @@ Build JavaScript-based applications that communicate with BioStamp® 3.0 sensors
 
 ## Getting started
 
-Add the following to your `.npmrc` file, replacing _TOKEN_ with your GitHub personal access token:
+Add the following lines to your `.npmrc` file, replacing _TOKEN_ with your GitHub personal access token:
 
 ```
 @mc10inc:registry=https://npm.pkg.github.com
