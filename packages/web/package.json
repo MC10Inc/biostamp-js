@@ -19,7 +19,7 @@
   },
   "homepage": "https://github.com/mc10inc/biostamp-js#readme",
   "dependencies": {
-    "@mc10inc/biostamp-js-core": "^1.0.3"
+    "@mc10inc/biostamp-js-core": "^1.0.1"
   },
   "devDependencies": {
     "webpack": "4.41.5",
