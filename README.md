@@ -14,7 +14,7 @@ Build JavaScript-based applications that communicate with BioStamp® 3.0 sensors
 
 ## Getting started
 
-Install the [package][13] corresponding to your target platform: `biostamp-js-web`, `biostamp-js-node` or `biostamp-js-nordic`.
+Install the corresponding to your target platform: [biostamp-js-web][13], [biostamp-js-node][14] or [biostamp-js-nordic][15].
 
 See [Configuring npm for use with GitHub Packages][12] for more information.
 
@@ -23,7 +23,7 @@ See [Configuring npm for use with GitHub Packages][12] for more information.
 The `BiostampSensor` class, described below, is a [Promise][4]-based interface for communicating with a BioStamp® 3.0 sensor. Do not instantiate this class directly. Rather, use the static `connect()` method corresponding to your target platform:
 
 ``` javascript
-let { BiostampSensor } = require("@adammark/biostamp-js-xxx");
+let { BiostampSensor } = require("@mc10inc/biostamp-js-xxx");
 
 BiostampSensor.connect(...).then((sensor) => {
   sensor.blinkLeds();
@@ -84,7 +84,7 @@ Connect to a sensor. This method invokes the web browser's Bluetooth pairing dia
   * **onDisconnect**: A function to run when the connected sensor disconnects for any reason.
 
 ``` javascript
-let { BiostampSensor } = require("@adammark/biostamp-js-web");
+let { BiostampSensor } = require("@mc10inc/biostamp-js-web");
 
 BiostampSensor.connect("BRC3", onDisconnect).then((sensor) => {
   sensor.blinkLeds();
@@ -103,7 +103,7 @@ Discover and connect to a sensor.
   * **onDisconnect**: A function to run when the connected sensor disconnects for any reason.
 
 ``` javascript
-let { BiostampSensor } = require("@adammark/biostamp-js-node");
+let { BiostampSensor } = require("@mc10inc/biostamp-js-node");
 
 BiostampSensor.connect("BRC3ea22", onDisconnect).then((sensor) => {
   sensor.blinkLeds();
@@ -119,7 +119,7 @@ BiostampSensor.connect("BRC3ea22", onDisconnect).then((sensor) => {
 Open a port to the [nRF52840 Dongle][10] and connect to a sensor.
 
 ``` javascript
-let { BiostampSensor } = require("@adammark/biostamp-js-nordic");
+let { BiostampSensor } = require("@mc10inc/biostamp-js-nordic");
 
 BiostampSensor.connect("/dev/tty.usbmodem40132", "fc:9a:af:25:ea:22", onDisconnect).then((sensor) => {
   sensor.blinkLeds();
@@ -756,4 +756,6 @@ BiostampError.RECORDING_NOT_IN_PROGRESS
 [10]: https://www.nordicsemi.com/Software-and-tools/Development-Kits/nRF52840-Dongle
 [11]: https://www.microsoft.com/en-us/edge
 [12]: https://help.github.com/en/packages/using-github-packages-with-your-projects-ecosystem/configuring-npm-for-use-with-github-packages
-[13]: https://github.com/adammark/biostamp-js/packages/
+[13]: https://github.com/MC10Inc/biostamp-js/packages/150198
+[14]: https://github.com/MC10Inc/biostamp-js/packages/150196
+[15]: https://github.com/MC10Inc/biostamp-js/packages/150195
