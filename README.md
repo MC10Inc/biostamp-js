@@ -56,10 +56,10 @@ BiostampSensor.connect(...).then((sensor) => {
 
 ## Issuing sensor commands
 
-Commands can be issued one at a time after connecting to a sensor. Some commands, such as `getSurfaceTemperature()`, return a payload when they resolve:
+Commands can be issued one at a time after connecting to a sensor. Some commands, such as `getTemperature()`, return a payload when they resolve:
 
 ``` javascript
-sensor.getSurfaceTemperature().then((temp) => {
+sensor.getTemperature().then((temp) => {
   console.log(temp); // 34
 });
 ```
@@ -180,23 +180,13 @@ sensor.blinkLeds().then(() => {
 });
 ```
 
-### getSurfaceTemperature()
+### getTemperature()
 
 Get the surface temperature in degrees Celcius.
 
 ``` javascript
-sensor.getSurfaceTemperature().then((degrees) => {
+sensor.getTemperature().then((degrees) => {
   console.log(degrees); // 34
-});
-```
-
-### getExternalTemperature()
-
-Get the external (ambient) temperature in degrees Celcius.
-
-``` javascript
-sensor.getExternalTemperature().then((degrees) => {
-  console.log(degrees); // 35.49583333333334
 });
 ```
 

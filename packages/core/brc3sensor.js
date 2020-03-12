@@ -219,21 +219,12 @@ class BRC3Sensor {
     return this.request(request).then((response) => null);
   }
 
-  getSurfaceTemperature() {
+  getTemperature() {
     let request = new schema.Request();
     request.setCommand(schema.Command.TEMPERATURE_GET);
 
     return this.request(request).then((response) => {
       return response.getTemperatureGet().getTemperatureC();
-    });
-  }
-
-  getExternalTemperature() {
-    let request = new schema.Request();
-    request.setCommand(schema.Command.PRESSURE_GET);
-
-    return this.request(request).then((response) => {
-      return response.getPressureGet().getExternalTemperatureC();
     });
   }
 
