@@ -34,13 +34,9 @@ BiostampSensor.connect(argv.serial, process.exit).then((sensor) => {
   }).then((systemStatus) => {
     vitals.systemStatus = systemStatus;
 
-    return sensor.getSurfaceTemperature();
-  }).then((surfaceTemp) => {
-    vitals.surfaceTemp = surfaceTemp;
-
-    return sensor.getExternalTemperature();
-  }).then((externalTemp) => {
-    vitals.externalTemp = externalTemp;
+    return sensor.getTemperature();
+  }).then((temperature) => {
+    vitals.temperature = temperature;
 
     return sensor.getPressure();
   }).then((pressure) => {
