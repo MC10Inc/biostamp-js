@@ -478,7 +478,7 @@ sensor.clearAllRecordings().then(() => {
 Download pages of raw recording data.
 
   * **recInfo**: A recording info object obtained through `getRecordingInfo()` or `listRecordings()`.
-  * **onPages**: A function to receive an array of recording pages.
+  * **onPages(pages)**: A function to receive an array of recording pages.
   * **startPage**: The first page to download (default is 0).
 
 ``` javascript
