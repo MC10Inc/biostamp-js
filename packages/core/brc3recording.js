@@ -14,8 +14,6 @@ class BRC3Recording {
       throw Error("Got page " + page.pageNumber + " but expected page " + this.nextPage);
     }
 
-    this.nextPage++;
-
     if (page.motion) {
       if (page.motion.gyroXList) {
         this.processMotionAccelGyro(page);
@@ -44,6 +42,8 @@ class BRC3Recording {
     else if (page.annotation) {
       this.processAnnotation(page);
     }
+
+    this.nextPage++;
   }
 
   processAnnotation(page) {

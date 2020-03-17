@@ -20,6 +20,8 @@ BiostampSensor.connect(argv.serial, process.exit).then((sensor) => {
       });
     }).then(() => {
       return recording.toCsv(argv.feature);
+    }).catch((err) => {
+      throw(err);
     });
   }).then((txt) => {
     let path = argv.serial + "-" + argv.recId + ".csv";
@@ -27,9 +29,9 @@ BiostampSensor.connect(argv.serial, process.exit).then((sensor) => {
     fs.writeFileSync(path, txt, "utf8");
 
     console.log("Saved " + path);
-
-    sensor.disconnect();
   }).catch((err) => {
-    console.warn(err);
+    console.error(err);
+  }).finally(() => {
+    sensor.disconnect();
   });
 });

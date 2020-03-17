@@ -541,17 +541,19 @@ class BRC3Sensor {
     let n = pageNum;
 
     let downloadNext = () => {
-      let getPages = BRC3Utils.promiseTimeout(15000, new Promise((resolve, reject) => {
-        this.recordingPagesListener = (recordingPages) => {
-          n = recordingPages[recordingPages.length - 1].pageNumber + 1;
+      let getPages = new Promise((resolve, reject) => {
+        this.recordingPagesListener = (pages) => {
+          n = pages[pages.length - 1].pageNumber + 1;
 
-          recordingPages.map(this.processRecordingPage);
+          pages.map(this.processRecordingPage);
 
-          pageListener(recordingPages);
+          pageListener(pages);
 
           resolve();
         };
-      }));
+
+        setTimeout(() => reject("Download timed out"), 15000);
+      });
 
       return Promise.all([getPages, this.readRecording(recInfo.recordingId, n)]).then(() => {
         if (n < recInfo.numPages) {

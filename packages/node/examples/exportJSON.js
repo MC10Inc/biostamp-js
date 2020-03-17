@@ -19,6 +19,8 @@ BiostampSensor.connect(argv.serial, process.exit).then((sensor) => {
       });
     }).then(() => {
       return recording.toObject();
+    }).catch((err) => {
+      throw(err);
     });
   }).then((obj) => {
     let path = argv.serial + "-" + argv.recId + ".json";
@@ -26,9 +28,9 @@ BiostampSensor.connect(argv.serial, process.exit).then((sensor) => {
     fs.writeFileSync(path, JSON.stringify(obj, null, 2), "utf8");
 
     console.log("Saved " + path);
-
-    sensor.disconnect();
   }).catch((err) => {
-    console.warn(err);
+    console.error(err);
+  }).finally(() => {
+    sensor.disconnect();
   });
 });
