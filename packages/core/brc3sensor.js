@@ -3,8 +3,7 @@ let schema = require("./brc3_pb.js");
 let BRC3Error = require("./brc3error.js");
 let BRC3Streaming = require("./brc3streaming.js");
 let BRC3PacketHandler = require("./brc3packet.js");
-
-let { crc16, encodeMessage, decodeMessage } = require("./brc3utils.js");
+let BRC3Utils = require("./brc3utils.js");
 
 const FLASH_PAGE_BYTES = 256;
 
@@ -111,7 +110,7 @@ class BRC3Sensor {
     let param = new schema.SensingStartCommandParam();
     param.setConfig(this.parseUserConfig(config));
     param.setMaxDuration(duration);
-    param.setMetadata(encodeMessage(metadata));
+    param.setMetadata(BRC3Utils.encodeMessage(metadata));
 
     let request = new schema.Request();
     request.setCommand(schema.Command.SENSING_START);
@@ -277,7 +276,7 @@ class BRC3Sensor {
 
     return this.request(request).then((response) => {
       let info = response.getRecordingGetInfo().getInfo().toObject();
-      info.metadata = decodeMessage(info.metadata);
+      info.metadata = BRC3Utils.decodeMessage(info.metadata);
 
       return info;
     });
@@ -429,7 +428,7 @@ class BRC3Sensor {
 
   annotate(message, timestamp) {
     let param = new schema.AnnotateCommandParam();
-    param.setAnnotationData(encodeMessage(message));
+    param.setAnnotationData(BRC3Utils.encodeMessage(message));
     param.setOverrideTimestamp(timestamp);
 
     let request = new schema.Request();
@@ -494,7 +493,7 @@ class BRC3Sensor {
     let param = new schema.UploadStartCommandParam();
     param.setType(schema.UploadType.FIRMWARE_IMAGE);
     param.setSize(file.length);
-    param.setCrc(crc16(file));
+    param.setCrc(BRC3Utils.crc16(file));
 
     let request = new schema.Request();
     request.setCommand(schema.Command.UPLOAD_START);
@@ -558,9 +557,7 @@ class BRC3Sensor {
     }
   }
 
-  downloadRecording(recInfo, pageListener, pageNum = 0) {
-    let n = pageNum;
-
+  processRecordingPage(page) {
     let differentialToAbsolute = (a) => {
       if (!a) {
         return;
@@ -574,50 +571,41 @@ class BRC3Sensor {
       }
     };
 
-    let processRecordingPage = (page) => {
-      if (!page.pageNumber) {
-        page.pageNumber = 0;
-      }
+    if (!page.pageNumber) {
+      page.pageNumber = 0;
+    }
 
-      if (page.motion) {
-        differentialToAbsolute(page.motion.accelXList);
-        differentialToAbsolute(page.motion.accelYList);
-        differentialToAbsolute(page.motion.accelZList);
-        differentialToAbsolute(page.motion.gyroXList);
-        differentialToAbsolute(page.motion.gyroYList);
-        differentialToAbsolute(page.motion.gyroZList);
-      }
+    if (page.motion) {
+      differentialToAbsolute(page.motion.accelXList);
+      differentialToAbsolute(page.motion.accelYList);
+      differentialToAbsolute(page.motion.accelZList);
+      differentialToAbsolute(page.motion.gyroXList);
+      differentialToAbsolute(page.motion.gyroYList);
+      differentialToAbsolute(page.motion.gyroZList);
+    }
 
-      if (page.afe4900) {
-        differentialToAbsolute(page.afe4900.ecgList);
-        differentialToAbsolute(page.afe4900.ppgList);
-      }
+    if (page.afe4900) {
+      differentialToAbsolute(page.afe4900.ecgList);
+      differentialToAbsolute(page.afe4900.ppgList);
+    }
 
-      if (page.annotation) {
-        page.annotation = decodeMessage(page.annotation.annotationData);
-      }
-    };
+    if (page.annotation) {
+      page.annotation = BRC3Utils.decodeMessage(page.annotation.annotationData);
+    }
+  }
 
-    let promiseTimeout = (timeoutMs, promise) => {
-      let timeout = new Promise((resolve, reject) => {
-        setTimeout(() => {
-          reject("Timed out");
-        }, timeoutMs);
-      });
-
-      return Promise.race([promise, timeout]);
-    };
+  downloadRecording(recInfo, pageListener, pageNum = 0) {
+    let n = pageNum;
 
     let downloadNext = () => {
-      let getPages = promiseTimeout(15000, new Promise((resolve, reject) => {
+      let getPages = BRC3Utils.promiseTimeout(15000, new Promise((resolve, reject) => {
         this.recordingPagesListener = (recordingPages) => {
           n = recordingPages[recordingPages.length - 1].pageNumber + 1;
 
-          for (let i = 0; i < recordingPages.length; i++) {
-            processRecordingPage(recordingPages[i]);
-          }
+          recordingPages.map(this.processRecordingPage);
 
           pageListener(recordingPages);
+
           resolve();
         };
       }));

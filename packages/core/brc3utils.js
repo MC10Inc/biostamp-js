@@ -33,5 +33,19 @@ let decodeMessage = (b64) => {
   return Buffer.from(b64, "base64").toString("utf-8");
 };
 
+let promiseTimeout = (timeoutMs, promise) => {
+  let timeout = new Promise((resolve, reject) => {
+    setTimeout(() => {
+      reject("Timed out");
+    }, timeoutMs);
+  });
 
-module.exports = { crc16, encodeMessage, decodeMessage };
+  return Promise.race([promise, timeout]);
+};
+
+module.exports = {
+  crc16,
+  encodeMessage,
+  decodeMessage,
+  promiseTimeout
+};
