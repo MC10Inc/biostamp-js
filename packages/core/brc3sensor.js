@@ -165,45 +165,6 @@ class BRC3Sensor {
     return this.request(request).then((response) => null);
   }
 
-  timesyncRxEnable(address, intervalMs, calibrationEnabled) {
-    let param = new schema.TimesyncRxEnableCommandParam();
-    param.setAddress(address);
-    param.setIntervalMs(intervalMs);
-    param.setCalibrationEnabled(calibrationEnabled);
-
-    let request = new schema.Request();
-    request.setCommand(schema.Command.TIMESYNC_RX_ENABLE);
-    request.setTimestampRxEnable(param);
-
-    return this.request(request).then((response) => null);
-  }
-
-  timesyncRxDisable() {
-    let request = new schema.Request();
-    request.setCommand(schema.Command.TIMESYNC_RX_DISABLE);
-
-    return this.request(request).then((response) => null);
-  }
-
-  timesyncTxEnable(address, intervalMs) {
-    let param = new schema.TimesyncTxEnableCommandParam();
-    param.setAddress(address);
-    param.setIntervalMs(intervalMs);
-
-    let request = new schema.Request();
-    request.setCommand(schema.Command.TIMESYNC_TX_ENABLE);
-    request.setTimestampTxEnable(param);
-
-    return this.request(request).then((response) => null);
-  }
-
-  timesyncTxDisable() {
-    let request = new schema.Request();
-    request.setCommand(schema.Command.TIMESYNC_TX_DISABLE);
-
-    return this.request(request).then((response) => null);
-  }
-
   advertisingDisable() {
     let request = new schema.Request();
     request.setCommand(schema.Command.ADVERTISING_DISABLE);
@@ -448,24 +409,6 @@ class BRC3Sensor {
     let request = new schema.Request();
     request.setCommand(schema.Command.RECORDING_READ);
     request.setRecordingRead(param);
-
-    return this.request(request).then((response) => null);
-  }
-
-  timestampTestDisable(address) {
-    this.timestampTestListener = undefined;
-
-    let request = new schema.Request();
-    request.setCommand(schema.Command.TIMESTAMP_TEST_DISABLE);
-
-    return this.request(request).then((response) => null);
-  }
-
-  timestampTestEnable(address, listener) {
-    this.timestampTestListener = listener;
-
-    let request = new schema.Request();
-    request.setCommand(schema.Command.TIMESTAMP_TEST_ENABLE);
 
     return this.request(request).then((response) => null);
   }
