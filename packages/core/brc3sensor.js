@@ -632,10 +632,9 @@ class BRC3Sensor {
 
     return this.request(request).then((response) => {
       let faultInfo = response.getFaultLogRead().getFaultInfo();
+
       if (faultInfo) {
         return faultInfo.toObject();
-      } else {
-        return undefined;
       }
     });
   }
