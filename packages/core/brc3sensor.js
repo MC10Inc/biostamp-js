@@ -593,6 +593,52 @@ class BRC3Sensor {
 
     return this.request(request).then((response) => null);
   }
+
+  clearFaultLogs() {
+    let request = new schema.Request();
+    request.setCommand(schema.Command.FAULT_LOG_CLEAR);
+
+    return this.request(request).then((response) => null);
+  }
+
+  getFaultLogs() {
+    return new Promise((resolve, reject) => {
+      let faultLogs = [];
+
+      let getFaultLog = (index) => {
+        this.readFaultLog(index).then((faultLog) => {
+          if (faultLog) {
+            faultLogs.push(faultLog);
+            getFaultLog(index + 1);
+          } else {
+            resolve(faultLogs);
+          }
+        }).catch((err) => {
+          reject(err);
+        });
+      };
+
+      getFaultLog(0);
+    });
+  }
+
+  readFaultLog(index) {
+    let param = new schema.FaultLogReadCommandParam();
+    param.setIndex(index);
+
+    let request = new schema.Request();
+    request.setCommand(schema.Command.FAULT_LOG_READ);
+    request.setFaultLogRead(param);
+
+    return this.request(request).then((response) => {
+      let faultInfo = response.getFaultLogRead().getFaultInfo();
+      if (faultInfo) {
+        return faultInfo.toObject();
+      } else {
+        return undefined;
+      }
+    });
+  }
 }
 
 let props = [
