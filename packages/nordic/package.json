@@ -1,6 +1,6 @@
 {
   "name": "@mc10inc/biostamp-js-nordic",
-  "version": "1.0.4",
+  "version": "1.0.5",
   "description": "Biostamp® 3.0 JavaScript SDK for Nordic",
   "main": "index.js",
   "scripts": {
@@ -14,7 +14,7 @@
   "author": "MC10, Inc.",
   "license": "SEE LICENSE IN LICENSE.md",
   "dependencies": {
-    "@mc10inc/biostamp-js-core": "^1.0.3",
+    "@mc10inc/biostamp-js-core": "^1.0.4",
     "npm": "^6.13.4",
     "pc-ble-driver-js": "^2.6.2",
     "yargs": "^15.1.0"

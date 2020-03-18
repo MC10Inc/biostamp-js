@@ -1,6 +1,6 @@
 {
   "name": "@mc10inc/biostamp-js-core",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "description": "Biostamp® 3.0 JavaScript SDK Core",
   "main": "index.js",
   "scripts": {
