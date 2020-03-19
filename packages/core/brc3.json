@@ -1,0 +1,1522 @@
+{
+  "options": {
+    "java_package": "com.mc10inc.biostamp3.sdk"
+  },
+  "nested": {
+    "Command": {
+      "values": {
+        "COMMAND_UNDEFINED": 0,
+        "TEMPERATURE_GET": 20,
+        "TIME_GET": 21,
+        "TIME_SET": 22,
+        "FLASH_ERASE_BLOCK": 24,
+        "FLASH_WRITE_PAGE": 25,
+        "FLASH_READ_DATA": 26,
+        "PRESSURE_GET": 28,
+        "SYSTEM_STATUS": 29,
+        "POWER_OFF": 30,
+        "RESET": 31,
+        "SENSING_START": 32,
+        "SENSING_STOP": 33,
+        "STREAMING_START": 34,
+        "STREAMING_STOP": 35,
+        "UPLOAD_START": 36,
+        "UPLOAD_WRITE_PAGE": 37,
+        "UPLOAD_FINISH": 38,
+        "CLEAR_ALL_RECORDINGS": 39,
+        "RECORDING_GET_INFO": 40,
+        "RECORDING_READ": 41,
+        "SENSING_GET_INFO": 42,
+        "RECORDING_GET_FREE_SPACE": 43,
+        "VERSION_GET": 44,
+        "TIMESYNC_TX_DISABLE": 45,
+        "TIMESYNC_TX_ENABLE": 46,
+        "TIMESYNC_RX_DISABLE": 47,
+        "TIMESYNC_RX_ENABLE": 48,
+        "AFE4900_DYNAMIC_CONFIG": 49,
+        "LOAD_FIRMWARE_IMAGE": 50,
+        "SIMULATE_FAULT": 51,
+        "UPLOAD_WRITE_PAGES_FAST": 52,
+        "RECORDING_GET_COUNT": 53,
+        "RECORDING_CLEAR_OLDEST": 54,
+        "FAULT_GET_INFO": 55,
+        "DEBUG_RTOS_GET_INFO": 56,
+        "ANNOTATE": 57,
+        "FAULT_LOG_READ": 58,
+        "FAULT_LOG_CLEAR": 59,
+        "TEST_DATA": 101,
+        "BLINK_LEDS": 102,
+        "TIMESTAMP_TEST_DISABLE": 103,
+        "TIMESTAMP_TEST_ENABLE": 104,
+        "ADVERTISING_DISABLE": 105
+      }
+    },
+    "ErrorCode": {
+      "values": {
+        "ERROR_UNDEFINED": 0,
+        "SUCCESS": 1,
+        "PARSE": 2,
+        "UNSUPPORTED": 3,
+        "FAIL": 4,
+        "INVALID_PARAMETER": 5,
+        "TIME_NOT_SET": 6,
+        "CANNOT_START": 7,
+        "CANNOT_STOP": 8,
+        "UPLOAD_FAILED": 9,
+        "MEMORY_FULL": 10,
+        "RECORDING_NOT_FOUND": 11,
+        "FIRMWARE_IMAGE_INCOMPATIBLE": 12,
+        "FIRMWARE_IMAGE_INVALID": 13,
+        "RECORDING_IN_PROGRESS": 14,
+        "RECORDING_NOT_IN_PROGRESS": 15
+      }
+    },
+    "FlashEraseBlockCommandParam": {
+      "fields": {
+        "address": {
+          "type": "uint32",
+          "id": 1
+        }
+      }
+    },
+    "FlashWritePageCommandParam": {
+      "fields": {
+        "address": {
+          "type": "uint32",
+          "id": 1
+        },
+        "data": {
+          "type": "bytes",
+          "id": 2
+        }
+      }
+    },
+    "FlashReadDataCommandParam": {
+      "fields": {
+        "address": {
+          "type": "uint32",
+          "id": 1
+        },
+        "length": {
+          "type": "uint32",
+          "id": 2
+        }
+      }
+    },
+    "TestDataCommandParam": {
+      "fields": {
+        "numBytes": {
+          "type": "uint32",
+          "id": 100
+        }
+      }
+    },
+    "PressureGetResponseParam": {
+      "fields": {
+        "pascals": {
+          "type": "double",
+          "id": 1
+        },
+        "externalTemperatureC": {
+          "type": "double",
+          "id": 2
+        }
+      }
+    },
+    "TemperatureGetResponseParam": {
+      "fields": {
+        "temperatureC": {
+          "type": "int32",
+          "id": 1
+        }
+      }
+    },
+    "FlashReadDataResponseParam": {
+      "fields": {
+        "data": {
+          "type": "bytes",
+          "id": 1
+        }
+      }
+    },
+    "TimeGetResponseParam": {
+      "fields": {
+        "timestamp": {
+          "type": "double",
+          "id": 1
+        }
+      }
+    },
+    "TimeSetCommandParam": {
+      "fields": {
+        "timestamp": {
+          "type": "double",
+          "id": 1
+        }
+      }
+    },
+    "SystemStatusResponseParam": {
+      "fields": {
+        "batteryPercent": {
+          "type": "uint32",
+          "id": 1
+        },
+        "chargePower": {
+          "type": "bool",
+          "id": 2
+        },
+        "uptimeSec": {
+          "type": "uint32",
+          "id": 3
+        },
+        "resetReason": {
+          "type": "uint32",
+          "id": 4
+        }
+      }
+    },
+    "SensingStartCommandParam": {
+      "fields": {
+        "config": {
+          "type": "SensorConfig",
+          "id": 1
+        },
+        "maxDuration": {
+          "type": "uint32",
+          "id": 2
+        },
+        "metadata": {
+          "type": "bytes",
+          "id": 3
+        }
+      }
+    },
+    "SensingStartResponseParam": {
+      "fields": {
+        "recordingId": {
+          "type": "uint32",
+          "id": 1
+        }
+      }
+    },
+    "SensingStopResponseParam": {
+      "fields": {
+        "recordingId": {
+          "type": "uint32",
+          "id": 1
+        }
+      }
+    },
+    "StreamingStartCommandParam": {
+      "fields": {
+        "type": {
+          "type": "StreamingType",
+          "id": 1
+        }
+      }
+    },
+    "StreamingStartResponseParam": {
+      "fields": {
+        "info": {
+          "type": "StreamingInfo",
+          "id": 1
+        }
+      }
+    },
+    "StreamingStopCommandParam": {
+      "fields": {
+        "type": {
+          "type": "StreamingType",
+          "id": 1
+        }
+      }
+    },
+    "UploadType": {
+      "values": {
+        "UPLOAD_TYPE_UNDEFINED": 0,
+        "FIRMWARE_IMAGE": 1
+      }
+    },
+    "UploadStartCommandParam": {
+      "fields": {
+        "type": {
+          "type": "UploadType",
+          "id": 1
+        },
+        "size": {
+          "type": "uint32",
+          "id": 2
+        },
+        "crc": {
+          "type": "uint32",
+          "id": 3
+        }
+      }
+    },
+    "UploadStartResponseParam": {
+      "fields": {
+        "maxFastWriteSize": {
+          "type": "uint32",
+          "id": 1
+        }
+      }
+    },
+    "UploadWritePageCommandParam": {
+      "fields": {
+        "offset": {
+          "type": "uint32",
+          "id": 1
+        },
+        "data": {
+          "type": "bytes",
+          "id": 2
+        }
+      }
+    },
+    "RecordingGetInfoCommandParam": {
+      "fields": {
+        "index": {
+          "type": "uint32",
+          "id": 1
+        },
+        "recordingId": {
+          "type": "uint32",
+          "id": 2
+        }
+      }
+    },
+    "RecordingGetInfoResponseParam": {
+      "fields": {
+        "info": {
+          "type": "RecordingInfo",
+          "id": 1
+        }
+      }
+    },
+    "RecordingGetCountResponseParam": {
+      "fields": {
+        "count": {
+          "type": "uint32",
+          "id": 1
+        }
+      }
+    },
+    "RecordingReadCommandParam": {
+      "fields": {
+        "recordingId": {
+          "type": "uint32",
+          "id": 1
+        },
+        "firstPage": {
+          "type": "uint32",
+          "id": 2
+        }
+      }
+    },
+    "SensingGetInfoResponseParam": {
+      "fields": {
+        "enabled": {
+          "type": "bool",
+          "id": 1
+        },
+        "sensorConfig": {
+          "type": "SensorConfig",
+          "id": 2
+        },
+        "timestampStart": {
+          "type": "uint32",
+          "id": 3
+        },
+        "recordingId": {
+          "type": "uint32",
+          "id": 4
+        }
+      }
+    },
+    "RecordingGetFreeSpaceResponseParam": {
+      "fields": {
+        "freeBlocks": {
+          "type": "uint32",
+          "id": 1
+        },
+        "totalBlocks": {
+          "type": "uint32",
+          "id": 2
+        }
+      }
+    },
+    "VersionGetResponseParam": {
+      "fields": {
+        "firmwareVersion": {
+          "type": "string",
+          "id": 1
+        },
+        "bootloaderVersion": {
+          "type": "string",
+          "id": 2
+        }
+      }
+    },
+    "TimesyncTxEnableCommandParam": {
+      "fields": {
+        "address": {
+          "type": "uint32",
+          "id": 1
+        },
+        "intervalMs": {
+          "type": "uint32",
+          "id": 2
+        }
+      }
+    },
+    "TimesyncRxEnableCommandParam": {
+      "fields": {
+        "address": {
+          "type": "uint32",
+          "id": 1
+        },
+        "intervalMs": {
+          "type": "uint32",
+          "id": 2
+        },
+        "calibrationEnabled": {
+          "type": "bool",
+          "id": 3
+        }
+      }
+    },
+    "AFE4900DynamicConfigCommandParam": {
+      "fields": {
+        "dynamic": {
+          "type": "AFE4900Dynamic",
+          "id": 1
+        }
+      }
+    },
+    "SimulateFaultCommandParam": {
+      "fields": {
+        "fault": {
+          "type": "SimulateFaultType",
+          "id": 1
+        }
+      }
+    },
+    "FaultGetInfoResponseParam": {
+      "fields": {
+        "faultInfo": {
+          "type": "FaultInfo",
+          "id": 1
+        }
+      }
+    },
+    "DebugRtosGetInfoResponseParam": {
+      "fields": {
+        "tasks": {
+          "rule": "repeated",
+          "type": "DebugRtosTask",
+          "id": 1
+        },
+        "heapFreeSpace": {
+          "type": "uint32",
+          "id": 2
+        }
+      }
+    },
+    "AnnotateCommandParam": {
+      "fields": {
+        "annotationData": {
+          "type": "bytes",
+          "id": 1
+        },
+        "overrideTimestamp": {
+          "type": "double",
+          "id": 2
+        }
+      }
+    },
+    "AnnotateResponseParam": {
+      "fields": {
+        "timestamp": {
+          "type": "double",
+          "id": 1
+        }
+      }
+    },
+    "FaultLogReadCommandParam": {
+      "fields": {
+        "index": {
+          "type": "uint32",
+          "id": 1
+        }
+      }
+    },
+    "FaultLogReadResponseParam": {
+      "fields": {
+        "faultInfo": {
+          "type": "FaultInfo",
+          "id": 1
+        }
+      }
+    },
+    "Request": {
+      "oneofs": {
+        "param": {
+          "oneof": [
+            "testData",
+            "timeSet",
+            "flashEraseBlock",
+            "flashWritePage",
+            "flashReadData",
+            "sensingStart",
+            "streamingStart",
+            "streamingStop",
+            "uploadStart",
+            "uploadWritePage",
+            "recordingGetInfo",
+            "recordingRead",
+            "timesyncTxEnable",
+            "timesyncRxEnable",
+            "afe4900DynamicConfig",
+            "simulateFault",
+            "annotate",
+            "faultLogRead"
+          ]
+        }
+      },
+      "fields": {
+        "command": {
+          "type": "Command",
+          "id": 1
+        },
+        "testData": {
+          "type": "TestDataCommandParam",
+          "id": 101
+        },
+        "timeSet": {
+          "type": "TimeSetCommandParam",
+          "id": 102
+        },
+        "flashEraseBlock": {
+          "type": "FlashEraseBlockCommandParam",
+          "id": 103
+        },
+        "flashWritePage": {
+          "type": "FlashWritePageCommandParam",
+          "id": 104
+        },
+        "flashReadData": {
+          "type": "FlashReadDataCommandParam",
+          "id": 105
+        },
+        "sensingStart": {
+          "type": "SensingStartCommandParam",
+          "id": 106
+        },
+        "streamingStart": {
+          "type": "StreamingStartCommandParam",
+          "id": 107
+        },
+        "streamingStop": {
+          "type": "StreamingStopCommandParam",
+          "id": 108
+        },
+        "uploadStart": {
+          "type": "UploadStartCommandParam",
+          "id": 109
+        },
+        "uploadWritePage": {
+          "type": "UploadWritePageCommandParam",
+          "id": 110
+        },
+        "recordingGetInfo": {
+          "type": "RecordingGetInfoCommandParam",
+          "id": 111
+        },
+        "recordingRead": {
+          "type": "RecordingReadCommandParam",
+          "id": 112
+        },
+        "timesyncTxEnable": {
+          "type": "TimesyncTxEnableCommandParam",
+          "id": 113
+        },
+        "timesyncRxEnable": {
+          "type": "TimesyncRxEnableCommandParam",
+          "id": 114
+        },
+        "afe4900DynamicConfig": {
+          "type": "AFE4900DynamicConfigCommandParam",
+          "id": 115
+        },
+        "simulateFault": {
+          "type": "SimulateFaultCommandParam",
+          "id": 116
+        },
+        "annotate": {
+          "type": "AnnotateCommandParam",
+          "id": 117
+        },
+        "faultLogRead": {
+          "type": "FaultLogReadCommandParam",
+          "id": 118
+        }
+      }
+    },
+    "Response": {
+      "oneofs": {
+        "param": {
+          "oneof": [
+            "temperatureGet",
+            "timeGet",
+            "flashReadData",
+            "pressureGet",
+            "systemStatus",
+            "streamingStart",
+            "recordingGetInfo",
+            "sensingGetInfo",
+            "recordingGetFreeSpace",
+            "versionGet",
+            "uploadStart",
+            "sensingStart",
+            "recordingGetCount",
+            "faultGetInfo",
+            "debugRtosGetInfo",
+            "sensingStop",
+            "annotate",
+            "faultLogRead"
+          ]
+        }
+      },
+      "fields": {
+        "command": {
+          "type": "Command",
+          "id": 1
+        },
+        "error": {
+          "type": "ErrorCode",
+          "id": 2
+        },
+        "errorMessage": {
+          "type": "string",
+          "id": 3
+        },
+        "temperatureGet": {
+          "type": "TemperatureGetResponseParam",
+          "id": 20
+        },
+        "timeGet": {
+          "type": "TimeGetResponseParam",
+          "id": 21
+        },
+        "flashReadData": {
+          "type": "FlashReadDataResponseParam",
+          "id": 22
+        },
+        "pressureGet": {
+          "type": "PressureGetResponseParam",
+          "id": 24
+        },
+        "systemStatus": {
+          "type": "SystemStatusResponseParam",
+          "id": 25
+        },
+        "streamingStart": {
+          "type": "StreamingStartResponseParam",
+          "id": 26
+        },
+        "recordingGetInfo": {
+          "type": "RecordingGetInfoResponseParam",
+          "id": 27
+        },
+        "sensingGetInfo": {
+          "type": "SensingGetInfoResponseParam",
+          "id": 28
+        },
+        "recordingGetFreeSpace": {
+          "type": "RecordingGetFreeSpaceResponseParam",
+          "id": 29
+        },
+        "versionGet": {
+          "type": "VersionGetResponseParam",
+          "id": 30
+        },
+        "uploadStart": {
+          "type": "UploadStartResponseParam",
+          "id": 31
+        },
+        "sensingStart": {
+          "type": "SensingStartResponseParam",
+          "id": 32
+        },
+        "recordingGetCount": {
+          "type": "RecordingGetCountResponseParam",
+          "id": 33
+        },
+        "faultGetInfo": {
+          "type": "FaultGetInfoResponseParam",
+          "id": 34
+        },
+        "debugRtosGetInfo": {
+          "type": "DebugRtosGetInfoResponseParam",
+          "id": 35
+        },
+        "sensingStop": {
+          "type": "SensingStopResponseParam",
+          "id": 36
+        },
+        "annotate": {
+          "type": "AnnotateResponseParam",
+          "id": 37
+        },
+        "faultLogRead": {
+          "type": "FaultLogReadResponseParam",
+          "id": 38
+        }
+      }
+    },
+    "TestDataOne": {
+      "fields": {
+        "myDataOne": {
+          "type": "bytes",
+          "id": 200
+        }
+      }
+    },
+    "TestDataTwo": {
+      "fields": {
+        "foo": {
+          "type": "uint32",
+          "id": 200
+        },
+        "myDataTwo": {
+          "type": "bytes",
+          "id": 201
+        }
+      }
+    },
+    "Annotation": {
+      "fields": {
+        "annotationData": {
+          "type": "bytes",
+          "id": 1
+        }
+      }
+    },
+    "MotionSamples": {
+      "fields": {
+        "accelX": {
+          "rule": "repeated",
+          "type": "sint32",
+          "id": 1
+        },
+        "accelY": {
+          "rule": "repeated",
+          "type": "sint32",
+          "id": 2
+        },
+        "accelZ": {
+          "rule": "repeated",
+          "type": "sint32",
+          "id": 3
+        },
+        "gyroX": {
+          "rule": "repeated",
+          "type": "sint32",
+          "id": 4
+        },
+        "gyroY": {
+          "rule": "repeated",
+          "type": "sint32",
+          "id": 5
+        },
+        "gyroZ": {
+          "rule": "repeated",
+          "type": "sint32",
+          "id": 6
+        },
+        "magX": {
+          "rule": "repeated",
+          "type": "sint32",
+          "id": 30
+        },
+        "magY": {
+          "rule": "repeated",
+          "type": "sint32",
+          "id": 31
+        },
+        "magZ": {
+          "rule": "repeated",
+          "type": "sint32",
+          "id": 32
+        }
+      }
+    },
+    "RotationSamples": {
+      "fields": {
+        "quatA": {
+          "rule": "repeated",
+          "type": "float",
+          "id": 1
+        },
+        "quatB": {
+          "rule": "repeated",
+          "type": "float",
+          "id": 2
+        },
+        "quatC": {
+          "rule": "repeated",
+          "type": "float",
+          "id": 3
+        },
+        "quatD": {
+          "rule": "repeated",
+          "type": "float",
+          "id": 4
+        }
+      }
+    },
+    "AFE4900Samples": {
+      "fields": {
+        "ecg": {
+          "rule": "repeated",
+          "type": "sint32",
+          "id": 1
+        },
+        "ppg": {
+          "rule": "repeated",
+          "type": "sint32",
+          "id": 2
+        },
+        "ambient": {
+          "rule": "repeated",
+          "type": "sint32",
+          "id": 3
+        }
+      }
+    },
+    "EnvironmentSamples": {
+      "fields": {
+        "pascals": {
+          "rule": "repeated",
+          "type": "float",
+          "id": 2
+        },
+        "temperatureC": {
+          "rule": "repeated",
+          "type": "float",
+          "id": 3
+        },
+        "externalTemperatureC": {
+          "rule": "repeated",
+          "type": "float",
+          "id": 4
+        }
+      }
+    },
+    "AD5940Samples": {
+      "fields": {
+        "zMag": {
+          "rule": "repeated",
+          "type": "float",
+          "id": 1
+        },
+        "zPhase": {
+          "rule": "repeated",
+          "type": "float",
+          "id": 2
+        }
+      }
+    },
+    "StreamingSamples": {
+      "oneofs": {
+        "samples": {
+          "oneof": [
+            "motion",
+            "afe4900",
+            "environment",
+            "rotation",
+            "ad5940"
+          ]
+        }
+      },
+      "fields": {
+        "timestamp": {
+          "type": "uint64",
+          "id": 1
+        },
+        "samplingPeriod": {
+          "type": "uint32",
+          "id": 2
+        },
+        "motion": {
+          "type": "MotionSamples",
+          "id": 20
+        },
+        "afe4900": {
+          "type": "AFE4900Samples",
+          "id": 21
+        },
+        "environment": {
+          "type": "EnvironmentSamples",
+          "id": 22
+        },
+        "rotation": {
+          "type": "RotationSamples",
+          "id": 23
+        },
+        "ad5940": {
+          "type": "AD5940Samples",
+          "id": 24
+        }
+      }
+    },
+    "StreamingType": {
+      "values": {
+        "STREAMING_TYPE_UNDEFINED": 0,
+        "MOTION": 1,
+        "AFE4900": 2,
+        "ENVIRONMENT": 3,
+        "AD5940": 4
+      }
+    },
+    "StreamingInfo": {
+      "fields": {
+        "accelGScale": {
+          "type": "float",
+          "id": 1
+        },
+        "gyroDpsScale": {
+          "type": "float",
+          "id": 2
+        },
+        "afe4900EcgVScale": {
+          "type": "float",
+          "id": 3
+        },
+        "magUtScale": {
+          "type": "float",
+          "id": 4
+        },
+        "timestampScale": {
+          "type": "float",
+          "id": 5
+        },
+        "samplingPeriodScale": {
+          "type": "float",
+          "id": 6
+        }
+      }
+    },
+    "DataMessage": {
+      "oneofs": {
+        "data": {
+          "oneof": [
+            "testDataOne",
+            "testDataTwo",
+            "streamingSamples",
+            "timestampTest"
+          ]
+        }
+      },
+      "fields": {
+        "testDataOne": {
+          "type": "TestDataOne",
+          "id": 100
+        },
+        "testDataTwo": {
+          "type": "TestDataTwo",
+          "id": 101
+        },
+        "streamingSamples": {
+          "type": "StreamingSamples",
+          "id": 102
+        },
+        "timestampTest": {
+          "type": "TimestampTestMessage",
+          "id": 104
+        },
+        "recordingPages": {
+          "rule": "repeated",
+          "type": "RecordingPage",
+          "id": 103
+        }
+      }
+    },
+    "SensorConfig": {
+      "fields": {
+        "recordingEnabled": {
+          "type": "bool",
+          "id": 3
+        },
+        "motion": {
+          "type": "MotionConfig",
+          "id": 1
+        },
+        "afe4900": {
+          "type": "AFE4900Config",
+          "id": 2
+        },
+        "environment": {
+          "type": "EnvironmentConfig",
+          "id": 4
+        },
+        "ad5940": {
+          "type": "AD5940Config",
+          "id": 5
+        }
+      }
+    },
+    "AD5940Mode": {
+      "values": {
+        "AD5940_MODE_UNDEFINED": 0,
+        "EDA": 1
+      }
+    },
+    "AD5940Config": {
+      "fields": {
+        "mode": {
+          "type": "AD5940Mode",
+          "id": 1
+        },
+        "measureBaseline": {
+          "type": "bool",
+          "id": 30
+        }
+      }
+    },
+    "AFE4900Mode": {
+      "values": {
+        "AFE4900_MODE_UNDEFINED": 0,
+        "ECG": 1,
+        "PPG": 2,
+        "PTT": 3
+      }
+    },
+    "AFE4900ECGGain": {
+      "values": {
+        "AFE4900ECGGAIN_UNDEFINED": 0,
+        "GAIN_2": 1,
+        "GAIN_3": 2,
+        "GAIN_4": 3,
+        "GAIN_5": 4,
+        "GAIN_6": 5,
+        "GAIN_9": 6,
+        "GAIN_12": 7
+      }
+    },
+    "AFE4900Color": {
+      "values": {
+        "AFE4900COLOR_UNDEFINED": 0,
+        "GREEN": 1,
+        "RED": 2,
+        "INFRARED": 3
+      }
+    },
+    "AFE4900Photodiode": {
+      "values": {
+        "AFE4900PHOTODIODE_UNDEFINED": 0,
+        "PD1": 1,
+        "PD2": 2
+      }
+    },
+    "AFE4900TIAGain": {
+      "values": {
+        "AFE4900TIAGAIN_UNDEFINED": 0,
+        "TIA_GAIN_10KOHM": 1,
+        "TIA_GAIN_25KOHM": 2,
+        "TIA_GAIN_50KOHM": 3,
+        "TIA_GAIN_100KOHM": 4,
+        "TIA_GAIN_250KOHM": 5,
+        "TIA_GAIN_500KOHM": 6,
+        "TIA_GAIN_1000KOHM": 7,
+        "TIA_GAIN_1500KOHM": 8,
+        "TIA_GAIN_2000KOHM": 9
+      }
+    },
+    "AFE4900OffdacScale": {
+      "values": {
+        "AFE4900OFFDACSCALE_UNDEFINED": 0,
+        "OFFDAC_SCALE_1X": 1,
+        "OFFDAC_SCALE_2X": 2,
+        "OFFDAC_SCALE_4X": 3,
+        "OFFDAC_SCALE_8X": 4
+      }
+    },
+    "AFE4900Dynamic": {
+      "fields": {
+        "tiaGain": {
+          "type": "AFE4900TIAGain",
+          "id": 1
+        },
+        "ledCurrent": {
+          "type": "uint32",
+          "id": 2
+        },
+        "offdacCurrent": {
+          "type": "int32",
+          "id": 3
+        },
+        "photodiodeDisconnect": {
+          "type": "bool",
+          "id": 4
+        },
+        "offdacCurrentAmbient": {
+          "type": "int32",
+          "id": 5
+        },
+        "offdacScale": {
+          "type": "AFE4900OffdacScale",
+          "id": 6
+        }
+      }
+    },
+    "AFE4900Config": {
+      "fields": {
+        "mode": {
+          "type": "AFE4900Mode",
+          "id": 1
+        },
+        "ecgGain": {
+          "type": "AFE4900ECGGain",
+          "id": 2
+        },
+        "color": {
+          "type": "AFE4900Color",
+          "id": 3
+        },
+        "photodiode": {
+          "type": "AFE4900Photodiode",
+          "id": 4
+        }
+      }
+    },
+    "EnvironmentMode": {
+      "values": {
+        "ENVIRONMENTMODE_UNDEFINED": 0,
+        "ALL": 1
+      }
+    },
+    "EnvironmentConfig": {
+      "fields": {
+        "mode": {
+          "type": "EnvironmentMode",
+          "id": 1
+        },
+        "samplingPeriodUs": {
+          "type": "uint32",
+          "id": 2
+        }
+      }
+    },
+    "MotionMode": {
+      "values": {
+        "MOTION_MODE_UNDEFINED": 0,
+        "ACCEL": 1,
+        "ACCEL_GYRO": 2,
+        "COMPASS": 3,
+        "ROTATION": 4
+      }
+    },
+    "MotionRotationType": {
+      "values": {
+        "MOTIONROTATIONTYPE_UNDEFINED": 0,
+        "ROT_ACCEL_GYRO": 1,
+        "ROT_ACCEL_GYRO_MAG": 2,
+        "ROT_ACCEL_MAG": 3
+      }
+    },
+    "MotionConfig": {
+      "fields": {
+        "samplingPeriodUs": {
+          "type": "uint32",
+          "id": 1
+        },
+        "accelGRange": {
+          "type": "uint32",
+          "id": 2
+        },
+        "gyroDpsRange": {
+          "type": "uint32",
+          "id": 3
+        },
+        "mode": {
+          "type": "MotionMode",
+          "id": 4
+        },
+        "rotationType": {
+          "type": "MotionRotationType",
+          "id": 5
+        }
+      }
+    },
+    "RecordingInfo": {
+      "fields": {
+        "recordingId": {
+          "type": "uint32",
+          "id": 1
+        },
+        "numPages": {
+          "type": "uint32",
+          "id": 2
+        },
+        "sizeBytes": {
+          "type": "uint32",
+          "id": 6
+        },
+        "timestampStart": {
+          "type": "uint32",
+          "id": 3
+        },
+        "durationSec": {
+          "type": "uint32",
+          "id": 4
+        },
+        "sensorConfig": {
+          "type": "SensorConfig",
+          "id": 5
+        },
+        "rawDataInfo": {
+          "type": "RawDataInfo",
+          "id": 8
+        },
+        "inProgress": {
+          "type": "bool",
+          "id": 7
+        },
+        "metadata": {
+          "type": "bytes",
+          "id": 9
+        }
+      }
+    },
+    "RawDataInfo": {
+      "fields": {
+        "timestampScale": {
+          "type": "float",
+          "id": 1
+        },
+        "samplingPeriodScale": {
+          "type": "float",
+          "id": 2
+        },
+        "accelGScale": {
+          "type": "float",
+          "id": 3
+        },
+        "gyroDpsScale": {
+          "type": "float",
+          "id": 4
+        },
+        "afe4900EcgVScale": {
+          "type": "float",
+          "id": 5
+        }
+      }
+    },
+    "RecordingPage": {
+      "oneofs": {
+        "samples": {
+          "oneof": [
+            "motion",
+            "afe4900",
+            "ad5940",
+            "environment",
+            "annotation"
+          ]
+        }
+      },
+      "fields": {
+        "pageNumber": {
+          "type": "uint32",
+          "id": 1
+        },
+        "timestamp": {
+          "type": "uint64",
+          "id": 2
+        },
+        "samplingPeriod": {
+          "type": "uint32",
+          "id": 3
+        },
+        "motion": {
+          "type": "MotionSamples",
+          "id": 4
+        },
+        "afe4900": {
+          "type": "AFE4900Samples",
+          "id": 5
+        },
+        "ad5940": {
+          "type": "AD5940Samples",
+          "id": 6
+        },
+        "environment": {
+          "type": "EnvironmentSamples",
+          "id": 7
+        },
+        "annotation": {
+          "type": "Annotation",
+          "id": 8
+        }
+      }
+    },
+    "TimestampTestMessage": {
+      "fields": {
+        "timestamp": {
+          "type": "uint64",
+          "id": 1
+        }
+      }
+    },
+    "SimulateFaultType": {
+      "values": {
+        "SIMULATEFAULTTYPE_UNDEFINED": 0,
+        "SIM_HUNG_TASK": 1,
+        "SIM_APP_ERROR": 2,
+        "SIM_HARD_FAULT": 3,
+        "SIM_SD_ASSERT": 4,
+        "SIM_INVALID_MEM_ACC": 5,
+        "SIM_HUNG_ISR": 6,
+        "SIM_MAIN_STACK_OVERFLOW": 7,
+        "SIM_TASK_STACK_OVERFLOW": 8
+      }
+    },
+    "FaultType": {
+      "values": {
+        "NO_FAULT": 0,
+        "SD_ASSERT": 1,
+        "APP_MEMACC": 2,
+        "APP_ERROR": 3,
+        "HARD_FAULT": 4,
+        "WATCHDOG": 5,
+        "WATCHDOG_TASK": 6,
+        "TASK_STACK_OVERFLOW": 7
+      }
+    },
+    "FaultAppError": {
+      "fields": {
+        "fileName": {
+          "type": "string",
+          "id": 1
+        },
+        "lineNumber": {
+          "type": "uint32",
+          "id": 2
+        },
+        "errorCode": {
+          "type": "uint32",
+          "id": 3
+        }
+      }
+    },
+    "FaultHardFault": {
+      "fields": {
+        "r0": {
+          "type": "uint32",
+          "id": 1
+        },
+        "r1": {
+          "type": "uint32",
+          "id": 2
+        },
+        "r2": {
+          "type": "uint32",
+          "id": 3
+        },
+        "r3": {
+          "type": "uint32",
+          "id": 4
+        },
+        "r12": {
+          "type": "uint32",
+          "id": 5
+        },
+        "lr": {
+          "type": "uint32",
+          "id": 6
+        },
+        "pc": {
+          "type": "uint32",
+          "id": 7
+        },
+        "psr": {
+          "type": "uint32",
+          "id": 8
+        },
+        "cfsr": {
+          "type": "uint32",
+          "id": 9
+        },
+        "hfsr": {
+          "type": "uint32",
+          "id": 10
+        },
+        "mmfar": {
+          "type": "uint32",
+          "id": 11
+        },
+        "bfar": {
+          "type": "uint32",
+          "id": 12
+        }
+      }
+    },
+    "FaultSdAssert": {
+      "fields": {
+        "pc": {
+          "type": "uint32",
+          "id": 1
+        }
+      }
+    },
+    "FaultMemAcc": {
+      "fields": {
+        "pc": {
+          "type": "uint32",
+          "id": 1
+        },
+        "address": {
+          "type": "uint32",
+          "id": 2
+        }
+      }
+    },
+    "FaultWatchdog": {
+      "fields": {
+        "r0": {
+          "type": "uint32",
+          "id": 1
+        },
+        "r1": {
+          "type": "uint32",
+          "id": 2
+        },
+        "r2": {
+          "type": "uint32",
+          "id": 3
+        },
+        "r3": {
+          "type": "uint32",
+          "id": 4
+        },
+        "r12": {
+          "type": "uint32",
+          "id": 5
+        },
+        "lr": {
+          "type": "uint32",
+          "id": 6
+        },
+        "pc": {
+          "type": "uint32",
+          "id": 7
+        },
+        "psr": {
+          "type": "uint32",
+          "id": 8
+        },
+        "icsr": {
+          "type": "uint32",
+          "id": 9
+        }
+      }
+    },
+    "FaultWatchdogTask": {
+      "fields": {
+        "taskName": {
+          "type": "string",
+          "id": 1
+        },
+        "lr": {
+          "type": "uint32",
+          "id": 2
+        },
+        "pc": {
+          "type": "uint32",
+          "id": 3
+        },
+        "blockingQueue": {
+          "type": "uint32",
+          "id": 4
+        },
+        "blockingOnQueueSend": {
+          "type": "bool",
+          "id": 5
+        }
+      }
+    },
+    "FaultTaskStackOverflow": {
+      "fields": {
+        "taskName": {
+          "type": "string",
+          "id": 1
+        }
+      }
+    },
+    "FaultInfo": {
+      "oneofs": {
+        "info": {
+          "oneof": [
+            "appError",
+            "hardFault",
+            "sdAssert",
+            "memAcc",
+            "watchdog",
+            "watchdogTask",
+            "taskStackOverflow"
+          ]
+        }
+      },
+      "fields": {
+        "type": {
+          "type": "FaultType",
+          "id": 1
+        },
+        "timestamp": {
+          "type": "uint32",
+          "id": 2
+        },
+        "appError": {
+          "type": "FaultAppError",
+          "id": 3
+        },
+        "hardFault": {
+          "type": "FaultHardFault",
+          "id": 4
+        },
+        "sdAssert": {
+          "type": "FaultSdAssert",
+          "id": 5
+        },
+        "memAcc": {
+          "type": "FaultMemAcc",
+          "id": 6
+        },
+        "watchdog": {
+          "type": "FaultWatchdog",
+          "id": 7
+        },
+        "watchdogTask": {
+          "type": "FaultWatchdogTask",
+          "id": 8
+        },
+        "taskStackOverflow": {
+          "type": "FaultTaskStackOverflow",
+          "id": 9
+        }
+      }
+    },
+    "DebugRtosTask": {
+      "fields": {
+        "taskName": {
+          "type": "string",
+          "id": 1
+        },
+        "stackHighWaterMark": {
+          "type": "uint32",
+          "id": 2
+        }
+      }
+    }
+  }
+}

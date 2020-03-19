@@ -8,6 +8,11 @@ This project uses [Lerna][1] to publish multiple packages to [GitHub Packages][2
 1. `npm install -g lerna`
 1. `lerna bootstrap` 
 
+## Compile brc3.proto to brc3.json
+
+1. `cd packages/core`
+1. `node compile.js`
+
 ## Publish packages
 
 1. `cd path/to/biostamp-js`

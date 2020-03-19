@@ -14,7 +14,8 @@
   "author": "MC10, Inc.",
   "license": "SEE LICENSE IN LICENSE.md",
   "dependencies": {
-    "google-protobuf": "^3.11.2"
+    "google-protobuf": "^3.11.2",
+    "protobufjs": "^6.8.9"
   },
   "bugs": {
     "url": "https://github.com/mc10inc/biostamp-js/issues"
