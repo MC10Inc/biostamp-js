@@ -25,12 +25,20 @@ let encodeMessage = (str) => {
   return Buffer.from(str);
 };
 
-let decodeMessage = (b64) => {
+let decodeMessage = (buffer) => {
   if (typeof navigator !== "undefined") {
-    return atob(b64);
+    if (buffer instanceof Array) {
+      buffer = Uint8Array.from(buffer);
+    }
+
+    return new TextDecoder().decode(buffer);
   }
 
-  return Buffer.from(b64, "base64").toString("utf-8");
+  if (buffer instanceof Array) {
+    buffer = Buffer.from(buffer);
+  }
+
+  return buffer.toString("utf-8");
 };
 
 module.exports = {

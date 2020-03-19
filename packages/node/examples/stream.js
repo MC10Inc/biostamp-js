@@ -19,7 +19,15 @@ BiostampSensor.connect(argv.serial, process.exit).then((sensor) => {
     recordingEnabled: false
   };
 
-  sensor.setTime().then(() => {
+  sensor.getSensingInfo().then((info) => {
+    if (info) {
+      return sensor.stopSensing();
+    }
+
+    return Promise.resolve();
+  }).then(() => {
+    return sensor.setTime();
+  }).then((time) => {
     return sensor.startSensing(config);
   }).then((recordingId) => {
     sensor.startStreaming(BiostampSensor.StreamingType.MOTION, (packet, ts) => {

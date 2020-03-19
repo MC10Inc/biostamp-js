@@ -445,9 +445,9 @@ The pseudo-code below shows all the supported values:
 ```
 {
   ledCurrent: (0...255),
-  offDacCurrent: (-127...127),
-  offDacCurrentAmbient: (-127...127),
-  offDacScale: BiostampSensor.AFE4900OffdacScale.OFFDAC_SCALE_(1X|2X|4X|8X),
+  offdacCurrent: (-127...127),
+  offdacCurrentAmbient: (-127...127),
+  offdacScale: BiostampSensor.AFE4900OffdacScale.OFFDAC_SCALE_(1X|2X|4X|8X),
   tiaGain: BiostampSensor.AFE4900TIAGain.TIA_GAIN_(10|25|50|100|250|500|1500|2000)KOHM
   photodiodeDisconnect: (true|false)
 }

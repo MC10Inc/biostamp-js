@@ -1,11 +1,8 @@
-let pb = require("protobufjs");
-let proto = require("./brc3.json");
-let schema = pb.Root.fromJSON(proto);
-
 class BRC3Streaming {
-  constructor() {
+  constructor(types) {
     this.listeners = {};
     this.infos = {};
+    this.types = types;
   }
 
   enableStream(type, info, listener) {
@@ -37,7 +34,7 @@ class BRC3Streaming {
   }
 
   handleAD5940(ss) {
-    let listener = this.listeners[schema.StreamingType.AD5940];
+    let listener = this.listeners[this.types.AD5940];
     let ad5940 = ss.ad5940;
 
     if (!listener) {
@@ -46,10 +43,10 @@ class BRC3Streaming {
 
     let samples = [];
 
-    for (let i = 0; i < ad5940.zMagList.length; i++) {
+    for (let i = 0; i < ad5940.zMag.length; i++) {
       samples.push({
-        zMag: ad5940.zMagList[i],
-        zPhase: ad5940.zPhaseList[i]
+        zMag: ad5940.zMag[i],
+        zPhase: ad5940.zPhase[i]
       });
     }
 
@@ -57,7 +54,7 @@ class BRC3Streaming {
   }
 
   handleAFE4900(ss) {
-    let type = schema.StreamingType.AFE4900;
+    let type = this.types.AFE4900;
     let listener = this.listeners[type];
     let afe = ss.afe4900;
 
@@ -67,22 +64,22 @@ class BRC3Streaming {
 
     let info = this.infos[type];
 
-    if (afe.ecgList.length > 0 && afe.ppgList.length > 0) {
-      let ecg = this.getDifferentialArray(afe.ecgList, info.afe4900EcgVScale);
-      let ppg = this.getDifferentialArray(afe.ppgList, 1);
+    if (afe.ecg && afe.ppg) {
+      let ecg = this.getDifferentialArray(afe.ecg, info.afe4900EcgVScale);
+      let ppg = this.getDifferentialArray(afe.ppg, 1);
       let ts = this.getTimestamps(info, ss, ecg.length);
 
       listener(this.zip([ecg, ppg]), ts);
     }
-    else if (afe.ecgList.length > 0) {
-      let ecg = this.getDifferentialArray(afe.ecgList, info.afe4900EcgVScale);
+    else if (afe.ecg) {
+      let ecg = this.getDifferentialArray(afe.ecg, info.afe4900EcgVScale);
       let ts = this.getTimestamps(info, ss, ecg.length);
 
       listener(ecg, ts);
     }
     else {
-      let ppg = this.getDifferentialArray(afe.ppgList, 1);
-      let ambient = this.getDifferentialArray(afe.ambientList, 1);
+      let ppg = this.getDifferentialArray(afe.ppg, 1);
+      let ambient = this.getDifferentialArray(afe.ambient, 1);
       let ts = this.getTimestamps(info, ss, ppg.length);
 
       listener(this.zip([ppg, ambient]), ts);
@@ -90,7 +87,7 @@ class BRC3Streaming {
   }
 
   handleEnvironment(ss) {
-    let type = schema.StreamingType.ENVIRONMENT;
+    let type = this.types.ENVIRONMENT;
     let listener = this.listeners[type];
     let info = this.infos[type];
     let environment = ss.environment;
@@ -101,11 +98,10 @@ class BRC3Streaming {
 
     let samples = [];
   
-    for (let i = 0; i < environment.pascalsList.length; i++) {
+    for (let i = 0; i < environment.pascals.length; i++) {
       samples.push({
-        pascals: environment.pascalsList[i],
-        temperatureC: environment.temperatureCList[i],
-        externalTemperatureC: environment.externalTemperatureCList[i]
+        pascals: environment.pascals[i],
+        temperatureC: environment.temperatureC[i]
       });
     }
 
@@ -115,7 +111,7 @@ class BRC3Streaming {
   }
 
   handleMotion(ss) {
-    let type = schema.StreamingType.MOTION;
+    let type = this.types.MOTION;
     let listener = this.listeners[type];
     let info = this.infos[type];
     let motion = ss.motion;
@@ -126,25 +122,25 @@ class BRC3Streaming {
 
     let axes = [];
 
-    if (motion.accelXList.length > 0) {
+    if (motion.accelX) {
       axes = axes.concat([
-        this.getDifferentialArray(motion.accelXList, info.accelGScale),
-        this.getDifferentialArray(motion.accelYList, info.accelGScale),
-        this.getDifferentialArray(motion.accelZList, info.accelGScale)
+        this.getDifferentialArray(motion.accelX, info.accelGScale),
+        this.getDifferentialArray(motion.accelY, info.accelGScale),
+        this.getDifferentialArray(motion.accelZ, info.accelGScale)
       ]);
     }
-    if (motion.gyroXList.length > 0) {
+    if (motion.gyroX) {
       axes = axes.concat([
-        this.getDifferentialArray(motion.gyroXList, info.gyroDpsScale),
-        this.getDifferentialArray(motion.gyroYList, info.gyroDpsScale),
-        this.getDifferentialArray(motion.gyroZList, info.gyroDpsScale)
+        this.getDifferentialArray(motion.gyroX, info.gyroDpsScale),
+        this.getDifferentialArray(motion.gyroY, info.gyroDpsScale),
+        this.getDifferentialArray(motion.gyroZ, info.gyroDpsScale)
       ]);
     }
-    if (motion.magXList.length > 0) {
+    if (motion.magX) {
       axes = axes.concat([
-        this.getDifferentialArray(motion.magXList, info.magUtScale),
-        this.getDifferentialArray(motion.magYList, info.magUtScale),
-        this.getDifferentialArray(motion.magZList, info.magUtScale)
+        this.getDifferentialArray(motion.magX, info.magUtScale),
+        this.getDifferentialArray(motion.magY, info.magUtScale),
+        this.getDifferentialArray(motion.magZ, info.magUtScale)
       ]);
     }
 
@@ -154,7 +150,7 @@ class BRC3Streaming {
   }
 
   handleRotation(ss) {
-    let type = schema.StreamingType.MOTION;
+    let type = this.types.MOTION;
     let listener = this.listeners[type];
     let info = this.infos[type];
     let rotation = ss.rotation;
@@ -164,10 +160,10 @@ class BRC3Streaming {
     }
 
     let axes = [
-      rotation.quatAList,
-      rotation.quatBList,
-      rotation.quatCList,
-      rotation.quatDList
+      rotation.quatA,
+      rotation.quatB,
+      rotation.quatC,
+      rotation.quatD
     ];
 
     let ts = this.getTimestamps(info, ss, axes[0].length);

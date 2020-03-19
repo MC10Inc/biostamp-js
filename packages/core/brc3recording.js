@@ -15,7 +15,7 @@ class BRC3Recording {
     }
 
     if (page.motion) {
-      if (page.motion.gyroXList) {
+      if (page.motion.gyroX) {
         this.processMotionAccelGyro(page);
       }
       else {
@@ -23,10 +23,10 @@ class BRC3Recording {
       }
     }
     else if (page.afe4900) {
-      if (page.afe4900.ecgList && page.afe4900.ppgList) {
+      if (page.afe4900.ecg && page.afe4900.ppg) {
         this.processAfe4900Ptt(page);
       }
-      else if (page.afe4900.ecgList) {
+      else if (page.afe4900.ecg) {
         this.processAfe4900Ecg(page);
       }
       else {
@@ -53,28 +53,28 @@ class BRC3Recording {
   }
 
   processAd5940Z(page) {
-    let series = [page.ad5940.zMagList, page.ad5940.zPhaseList];
+    let series = [page.ad5940.zMag, page.ad5940.zPhase];
     let scales = [1, 1];
 
     this.processSeries(page, series, scales, this.ad5940);
   }
 
   processAfe4900Ecg(page) {
-    let series = [page.afe4900.ecgList];
+    let series = [page.afe4900.ecg];
     let scales = [this.recInfo.rawDataInfo.afe4900EcgVScale];
 
     this.processSeries(page, series, scales, this.afe4900);
   }
 
   processAfe4900Ppg(page) {
-    let series = [page.afe4900.ppgList];
+    let series = [page.afe4900.ppg];
     let scales = [1];
 
     this.processSeries(page, series, scales, this.afe4900);
   }
 
   processAfe4900Ptt(page) {
-    let series = [page.afe4900.ecgList, page.afe4900.ppgList];
+    let series = [page.afe4900.ecg, page.afe4900.ppg];
     let scales = [this.recInfo.rawDataInfo.afe4900EcgVScale, 1];
 
     this.processSeries(page, series, scales, this.afe4900);
@@ -82,9 +82,9 @@ class BRC3Recording {
 
   processMotionAccel(page) {
     let series = [
-      page.motion.accelXList,
-      page.motion.accelYList,
-      page.motion.accelZList
+      page.motion.accelX,
+      page.motion.accelY,
+      page.motion.accelZ
     ];
 
     let scales = [
@@ -98,12 +98,12 @@ class BRC3Recording {
 
   processMotionAccelGyro(page) {
     let series = [
-      page.motion.accelXList,
-      page.motion.accelYList,
-      page.motion.accelZList,
-      page.motion.gyroXList,
-      page.motion.gyroYList,
-      page.motion.gyroZList
+      page.motion.accelX,
+      page.motion.accelY,
+      page.motion.accelZ,
+      page.motion.gyroX,
+      page.motion.gyroY,
+      page.motion.gyroZ
     ];
 
     let scales = [
@@ -120,9 +120,9 @@ class BRC3Recording {
 
   processEnvironment(page) {
     let series = [
-      page.environment.pascalsList,
-      page.environment.temperatureCList,
-      page.environment.externalTemperatureCList
+      page.environment.pascals,
+      page.environment.temperatureC,
+      page.environment.externalTemperatureC
     ];
 
     let scales = [1, 1, 1];

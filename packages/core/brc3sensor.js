@@ -13,7 +13,7 @@ const FLASH_PAGE_BYTES = 256;
 class BRC3Sensor {
   constructor() {
     this.packetHandler = new BRC3PacketHandler(this.handlePayload.bind(this));
-    this.streaming = new BRC3Streaming(schema);
+    this.streaming = new BRC3Streaming(schema.StreamingType);
   }
 
   request(request, dataWritePackets = undefined) {
@@ -49,80 +49,40 @@ class BRC3Sensor {
   }
 
   handlePayload(payload) {
-    // let msg = schema.DataMessage.deserializeBinary(payload).toObject();
+    let { DataMessage } = schema;
 
-    // if (msg.streamingSamples) {
-    //   this.streaming.handleStreamingSamples(msg.streamingSamples);
-    // }
-    // else if (msg.recordingPagesList && msg.recordingPagesList.length > 0) {
-    //   if (this.recordingPagesListener) {
-    //     this.recordingPagesListener(msg.recordingPagesList);
-    //     this.recordingPagesListener = undefined;
-    //   }
-    // }
-    // else {
-    //   console.log("Unknown data message: " + msg);
-    // }
+    let msg = DataMessage.decode(payload);
+
+    if (msg.streamingSamples) {
+      this.streaming.handleStreamingSamples(msg.streamingSamples);
+    }
+    else if (msg.recordingPages) {
+      if (this.recordingPagesListener) {
+        this.recordingPagesListener(msg.recordingPages);
+        this.recordingPagesListener = undefined;
+      }
+    }
+    else {
+      console.log("Unknown data message", msg);
+    }
   }
 
-  // parseUserConfig(config) {
-  //   let cfg = new schema.SensorConfig();
-  //   cfg.setRecordingEnabled(config.recordingEnabled);
+  startSensing(config, duration = 0, metadata = "") {
+    let { SensingStartCommandParam, SensorConfig } = schema;
 
-  //   if (config.motion) {
-  //     let motion = new schema.MotionConfig();
-  //     motion.setSamplingPeriodUs(config.motion.samplingPeriodUs);
-  //     motion.setAccelGRange(config.motion.accelGRange);
-  //     motion.setGyroDpsRange(config.motion.gyroDpsRange);
-  //     motion.setMode(config.motion.mode);
-  //     motion.setRotationType(config.motion.rotationType);
+    let request = Request.create({
+      command: Command.SENSING_START,
+      sensingStart: SensingStartCommandParam.create({
+        config: SensorConfig.fromObject(config),
+        maxDuration: duration,
+        metadata: BRC3Utils.encodeMessage(metadata)
+      })
+    });
 
-  //     cfg.setMotion(motion);
-  //   }
-
-  //   if (config.afe4900) {
-  //     let afe4900 = new schema.AFE4900Config();
-  //     afe4900.setMode(config.afe4900.mode);
-  //     afe4900.setEcgGain(config.afe4900.ecgGain);
-  //     afe4900.setColor(config.afe4900.color);
-  //     afe4900.setPhotodiode(config.afe4900.photodiode);
-
-  //     cfg.setAfe4900(afe4900);
-  //   }
-
-  //   if (config.environment) {
-  //     let environment = new schema.EnvironmentConfig();
-  //     environment.setMode(config.environment.mode);
-  //     environment.setSamplingPeriodUs(config.environment.samplingPeriodUs);
-
-  //     cfg.setEnvironment(environment);
-  //   }
-
-  //   if (config.ad5940) {
-  //     let ad5940 = new schema.AD5940Config();
-  //     ad5940.setMode(config.ad5940.mode);
-  //     ad5940.setMeasureBaseline(false);
-
-  //     cfg.setAd5940(ad5940);
-  //   }
-
-  //   return cfg;
-  // }
-
-  // startSensing(config, duration = 0, metadata = "") {
-  //   let param = new schema.SensingStartCommandParam();
-  //   param.setConfig(this.parseUserConfig(config));
-  //   param.setMaxDuration(duration);
-  //   param.setMetadata(BRC3Utils.encodeMessage(metadata));
-
-  //   let request = new schema.Request();
-  //   request.setCommand(schema.Command.SENSING_START);
-  //   request.setSensingStart(param);
-
-  //   return this.request(request).then((response) => {
-  //     return response.getSensingStart().getRecordingId() || null;
-  //   });
-  // }
+    return this.request(request).then((response) => {
+      return response.sensingStart.recordingId || null;
+    });
+  }
 
   stopSensing() {
     let request = Request.create({
@@ -209,22 +169,21 @@ class BRC3Sensor {
     });
   }
 
-  // getRecordingInfo(index = null, recordingId = null) {
-  //   let param = new schema.RecordingGetInfoCommandParam();
-  //   param.setIndex(index);
-  //   param.setRecordingId(recordingId);
+  getRecordingInfo(index = null, recordingId = null) {
+    let { RecordingGetInfoCommandParam } = schema;
 
-  //   let request = new schema.Request();
-  //   request.setCommand(schema.Command.RECORDING_GET_INFO);
-  //   request.setRecordingGetInfo(param);
+    let request = Request.create({
+      command: Command.RECORDING_GET_INFO,
+      recordingGetInfo: RecordingGetInfoCommandParam.create({ index, recordingId })
+    });
 
-  //   return this.request(request).then((response) => {
-  //     let info = response.getRecordingGetInfo().getInfo().toObject();
-  //     info.metadata = BRC3Utils.decodeMessage(info.metadata);
+    return this.request(request).then((response) => {
+      let info = response.recordingGetInfo.info;
+      info.metadata = BRC3Utils.decodeMessage(info.metadata);
 
-  //     return info;
-  //   });
-  // }
+      return info;
+    });
+  }
 
   countRecordings() {
     let request = Request.create({
@@ -236,28 +195,28 @@ class BRC3Sensor {
     });
   }
 
-  // listRecordings() {
-  //   return new Promise((resolve, reject) => {
-  //     let recordings = [];
+  listRecordings() {
+    return new Promise((resolve, reject) => {
+      let recordings = [];
 
-  //     let getRec = (index) => {
-  //       this.getRecordingInfo(index).then((rec) => {
-  //         recordings.push(rec);
+      let getRec = (index) => {
+        this.getRecordingInfo(index).then((rec) => {
+          recordings.push(rec);
 
-  //         getRec(index + 1);
-  //       }).catch((err) => {
-  //         if (err.code === BRC3Error.RECORDING_NOT_FOUND) {
-  //           resolve(recordings);
-  //         }
-  //         else {
-  //           reject(err);
-  //         }
-  //       });
-  //     };
+          getRec(index + 1);
+        }).catch((err) => {
+          if (err.code === BRC3Error.RECORDING_NOT_FOUND) {
+            resolve(recordings);
+          }
+          else {
+            reject(err);
+          }
+        });
+      };
 
-  //     getRec(0);
-  //   });
-  // }
+      getRec(0);
+    });
+  }
 
   getSystemStatus() {
     let request = Request.create({
@@ -302,19 +261,18 @@ class BRC3Sensor {
     return this.request(request).then((response) => null);
   }
 
-  // flashReadData(address, length) {
-  //   let param = new schema.FlashReadDataCommandParam();
-  //   param.setAddress(address);
-  //   param.setLength(length);
+  flashReadData(address, length) {
+    let { FlashReadDataCommandParam } = schema;
 
-  //   let request = new schema.Request();
-  //   request.setCommand(schema.Command.FLASH_READ_DATA);
-  //   request.setFlashReadData(param);
+    let request = Request.create({
+      command: Command.FLASH_READ_DATA,
+      flashReadData: FlashReadDataCommandParam.create({ address, length })
+    });
 
-  //   return this.request(request).then((response) => {
-  //     return response.getFlashReadData().getData();
-  //   });
-  // }
+    return this.request(request).then((response) => {
+      return response.flashReadData.data;
+    });
+  }
 
   getSensingInfo() {
     let request = Request.create({
@@ -330,135 +288,135 @@ class BRC3Sensor {
     });
   }
 
-  // startStreaming(type, listener) {
-  //   let param = new schema.StreamingStartCommandParam();
-  //   param.setType(type);
+  startStreaming(type, listener) {
+    let { StreamingStartCommandParam } = schema;
 
-  //   let request = new schema.Request();
-  //   request.setCommand(schema.Command.STREAMING_START);
-  //   request.setStreamingStart(param);
+    let request = Request.create({
+      command: Command.STREAMING_START,
+      streamingStart: StreamingStartCommandParam.create({ type })
+    });
 
-  //   return this.request(request).then((response) => {
-  //     let info = response.getStreamingStart().toObject().info;
+    return this.request(request).then((response) => {
+      let info = response.streamingStart.info;
 
-  //     this.streaming.enableStream(type, info, listener);
+      this.streaming.enableStream(type, info, listener);
 
-  //     return info;
-  //   });
-  // }
+      return info;
+    });
+  }
 
-  // stopStreaming(type) {
-  //   this.streaming.disableStream(type);
+  stopStreaming(type) {
+    this.streaming.disableStream(type);
 
-  //   let param = new schema.StreamingStopCommandParam();
-  //   param.setType(type);
+    let { StreamingStopCommandParam } = schema;
 
-  //   let request = new schema.Request();
-  //   request.setCommand(schema.Command.STREAMING_STOP);
-  //   request.setStreamingStop(param);
+    let request = Request.create({
+      command: Command.STREAMING_STOP,
+      streamingStop: StreamingStopCommandParam.create({ type })
+    });
 
-  //   return this.request(request).then((response) => null);
-  // }
+    return this.request(request).then((response) => null);
+  }
 
-  // annotate(message, timestamp) {
-  //   let param = new schema.AnnotateCommandParam();
-  //   param.setAnnotationData(BRC3Utils.encodeMessage(message));
-  //   param.setOverrideTimestamp(timestamp);
+  annotate(message, timestamp) {
+    let { AnnotateCommandParam } = schema;
 
-  //   let request = new schema.Request();
-  //   request.setCommand(schema.Command.ANNOTATE);
-  //   request.setAnnotate(param);
+    let request = Request.create({
+      command: Command.ANNOTATE,
+      annotate: AnnotateCommandParam.create({
+        annotationData: BRC3Utils.encodeMessage(message),
+        overrideTimestamp: timestamp
+      })
+    });
 
-  //   return this.request(request).then((response) => {
-  //     return response.getAnnotate().getTimestamp();
-  //   });
-  // }
+    return this.request(request).then((response) => {
+      return response.annotate.timestamp;
+    });
+  }
 
-  // readRecording(recordingId, firstPage) {
-  //   let param = new schema.RecordingReadCommandParam();
-  //   param.setRecordingId(recordingId);
-  //   param.setFirstPage(firstPage);
+  readRecording(recordingId, firstPage) {
+    let { RecordingReadCommandParam } = schema;
 
-  //   let request = new schema.Request();
-  //   request.setCommand(schema.Command.RECORDING_READ);
-  //   request.setRecordingRead(param);
+    let request = Request.create({
+      command: Command.RECORDING_READ,
+      recordingRead: RecordingReadCommandParam.create({ recordingId, firstPage })
+    });
 
-  //   return this.request(request).then((response) => null);
-  // }
+    return this.request(request).then((response) => null);
+  }
 
-  // afe4900DynamicConfig(config) {
-  //   let dynamic = new schema.AFE4900Dynamic();
-  //   dynamic.setTiaGain(config.tiaGain);
-  //   dynamic.setLedCurrent(config.ledCurrent);
-  //   dynamic.setOffdacCurrent(config.offDacCurrent);
-  //   dynamic.setOffdacScale(config.offDacScale);
-  //   dynamic.setOffdacCurrentAmbient(config.offDacCurrentAmbient);
-  //   dynamic.setPhotodiodeDisconnect(config.photodiodeDisconnect);
+  afe4900DynamicConfig(config) {
+    let { AFE4900Dynamic, AFE4900DynamicConfigCommandParam } = schema;
 
-  //   let param = new schema.AFE4900DynamicConfigCommandParam();
-  //   param.setDynamic(dynamic);
+    let request = Request.create({
+      command: Command.AFE4900_DYNAMIC_CONFIG,
+      afe4900DynamicConfig: AFE4900DynamicConfigCommandParam.create({
+        dynamic: AFE4900Dynamic.fromObject(config)
+      })
+    });
 
-  //   let request = new schema.Request();
-  //   request.setCommand(schema.Command.AFE4900_DYNAMIC_CONFIG);
-  //   request.setAfe4900DynamicConfig(param);
+    return this.request(request).then((response) => null);
+  }
 
-  //   return this.request(request).then((response) => null);
-  // }
+  uploadStart(file) {
+    let { UploadStartCommandParam } = schema;
 
-  // uploadStart(file) {
-  //   let param = new schema.UploadStartCommandParam();
-  //   param.setType(schema.UploadType.FIRMWARE_IMAGE);
-  //   param.setSize(file.length);
-  //   param.setCrc(BRC3Utils.crc16(file));
+    let request = Request.create({
+      command: Command.UPLOAD_START,
+      uploadStart: UploadStartCommandParam.create({
+        type: schema.UploadType.FIRMWARE_IMAGE,
+        size: file.length,
+        crc: BRC3Utils.crc16(file)
+      })
+    });
 
-  //   let request = new schema.Request();
-  //   request.setCommand(schema.Command.UPLOAD_START);
-  //   request.setUploadStart(param);
+    return this.request(request).then((response) => {
+      return response.uploadStart;
+    });
+  }
 
-  //   return this.request(request).then((response) => {
-  //     return response.getUploadStart().toObject();
-  //   });
-  // }
+  uploadWritePage(file, offset) {
+    let { UploadWritePageCommandParam } = schema;
 
-  // uploadWritePage(file, offset) {
-  //   let param = new schema.UploadWritePageCommandParam();
-  //   param.setOffset(offset);
-  //   param.setData(file.slice(offset, offset + FLASH_PAGE_BYTES));
+    let request = Request.create({
+      command: Command.UPLOAD_WRITE_PAGE,
+      uploadWritePage: UploadWritePageCommandParam.create({
+        offset: offset,
+        data: file.slice(offset, offset + FLASH_PAGE_BYTES)
+      })
+    });
 
-  //   let request = new schema.Request();
-  //   request.setCommand(schema.Command.UPLOAD_WRITE_PAGE);
-  //   request.setUploadWritePage(param);
+    return this.request(request).then((response) => null);
+  }
 
-  //   return this.request(request).then((response) => null);
-  // }
+  uploadFirmwareImage(image) {
+    this.padFirmwareImage(image);
 
-  // uploadFirmwareImage(image) {
-  //   this.padFirmwareImage(image);
+    return this.uploadStart(image).then((response) => {
+      let offset = 0;
+      let packets = [];
+      let imageCopy = image.slice();
+      // Max number of payload bytes we can include in each write, excluding the 4 byte address
+      let payloadLen = response.maxFastWriteSize - 4;
 
-  //   return this.uploadStart(image).then((response) => {
-  //     let offset = 0;
-  //     let packets = [];
-  //     let imageCopy = image.slice();
-  //     // Max number of payload bytes we can include in each write, excluding the 4 byte address
-  //     let payloadLen = response.maxFastWriteSize - 4;
+      while (imageCopy.length > 0) {
+        let packet = [offset & 0xff, (offset >> 8) & 0xff, (offset >> 16) & 0xff, (offset >> 24) & 0xff];
+        let payload = imageCopy.splice(0, payloadLen);
 
-  //     while (imageCopy.length > 0) {
-  //       let packet = [offset & 0xff, (offset >> 8) & 0xff, (offset >> 16) & 0xff, (offset >> 24) & 0xff];
-  //       let payload = imageCopy.splice(0, payloadLen);
+        packet = packet.concat(payload);
+        packets.push(packet);
+        offset += payload.length;
+      }
 
-  //       packet = packet.concat(payload);
-  //       packets.push(packet);
-  //       offset += payload.length;
-  //     }
+      let request = Request.create({
+        command: Command.UPLOAD_WRITE_PAGES_FAST
+      });
 
-  //     let request = new schema.Request();
-  //     request.setCommand(schema.Command.UPLOAD_WRITE_PAGES_FAST);
-
-  //     return this.request(request, packets).then((response) => null);
-  //   }).then(() => {
-  //     return this.uploadFinish();
-  //   });
-  // }
+      return this.request(request, packets).then((response) => null);
+    }).then(() => {
+      return this.uploadFinish();
+    });
+  }
 
   uploadFinish() {
     return this.command(Command.UPLOAD_FINISH);
@@ -470,70 +428,71 @@ class BRC3Sensor {
     }
   }
 
-  // processRecordingPage(page) {
-  //   let differentialToAbsolute = (a) => {
-  //     if (!a) {
-  //       return;
-  //     }
+  processRecordingPage(page) {
+    let differentialToAbsolute = (a) => {
+      if (!a) {
+        return;
+      }
 
-  //     let value = 0;
+      let value = 0;
 
-  //     for (let i = 0; i < a.length; i++) {
-  //       value += a[i];
-  //       a[i] = value;
-  //     }
-  //   };
+      for (let i = 0; i < a.length; i++) {
+        value += a[i];
+        a[i] = value;
+      }
+    };
 
-  //   if (!page.pageNumber) {
-  //     page.pageNumber = 0;
-  //   }
+    if (!page.pageNumber) {
+      page.pageNumber = 0;
+    }
 
-  //   if (page.motion) {
-  //     differentialToAbsolute(page.motion.accelXList);
-  //     differentialToAbsolute(page.motion.accelYList);
-  //     differentialToAbsolute(page.motion.accelZList);
-  //     differentialToAbsolute(page.motion.gyroXList);
-  //     differentialToAbsolute(page.motion.gyroYList);
-  //     differentialToAbsolute(page.motion.gyroZList);
-  //   }
+    if (page.motion) {
+      differentialToAbsolute(page.motion.accelX);
+      differentialToAbsolute(page.motion.accelY);
+      differentialToAbsolute(page.motion.accelZ);
+      differentialToAbsolute(page.motion.gyroX);
+      differentialToAbsolute(page.motion.gyroY);
+      differentialToAbsolute(page.motion.gyroZ);
+    }
 
-  //   if (page.afe4900) {
-  //     differentialToAbsolute(page.afe4900.ecgList);
-  //     differentialToAbsolute(page.afe4900.ppgList);
-  //   }
+    if (page.afe4900) {
+      differentialToAbsolute(page.afe4900.ecg);
+      differentialToAbsolute(page.afe4900.ppg);
+    }
 
-  //   if (page.annotation) {
-  //     page.annotation = BRC3Utils.decodeMessage(page.annotation.annotationData);
-  //   }
-  // }
+    if (page.annotation) {
+      console.log(page);
+      page.annotation = BRC3Utils.decodeMessage(page.annotation.annotationData);
+    }
+  }
 
-  // downloadRecording(recInfo, pageListener, pageNum = 0) {
-  //   let n = pageNum;
+  downloadRecording(recInfo, pageListener, pageNum = 0) {
+    let n = pageNum;
 
-  //   let downloadNext = () => {
-  //     let getPages = new Promise((resolve, reject) => {
-  //       this.recordingPagesListener = (pages) => {
-  //         n = pages[pages.length - 1].pageNumber + 1;
+    let downloadNext = () => {
+      let getPages = new Promise((resolve, reject) => {
+        this.recordingPagesListener = (pages) => {
+          n = (pages[pages.length - 1].pageNumber || 0) + 1;
 
-  //         pages.map(this.processRecordingPage);
+          pages.map(this.processRecordingPage);
 
-  //         pageListener(pages);
+          pageListener(pages);
 
-  //         resolve();
-  //       };
+          resolve();
+        };
 
-  //       setTimeout(() => reject("Download timed out"), 15000);
-  //     });
+        setTimeout(() => reject("Download timed out"), 15000);
+      });
 
-  //     return Promise.all([getPages, this.readRecording(recInfo.recordingId, n)]).then(() => {
-  //       if (n < recInfo.numPages) {
-  //         return downloadNext();
-  //       }
-  //     });
-  //   };
+      return Promise.all([getPages, this.readRecording(recInfo.recordingId, n)]).then(() => {
+        if (n < recInfo.numPages) {
+          return downloadNext();
+        }
+      });
+    };
 
-  //   return downloadNext();
-  // }
+    return downloadNext();
+  }
 
   getFaultInfo() {
     let request = Request.create({
