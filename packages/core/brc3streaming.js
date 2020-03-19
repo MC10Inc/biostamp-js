@@ -1,4 +1,6 @@
-let schema = require("./brc3_pb.js");
+let pb = require("protobufjs");
+let proto = require("./brc3.json");
+let schema = pb.Root.fromJSON(proto);
 
 class BRC3Streaming {
   constructor() {

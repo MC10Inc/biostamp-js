@@ -13,6 +13,11 @@ This project uses [Lerna][1] to publish multiple packages to [GitHub Packages][2
 1. `cd packages/core`
 1. `node compile.js`
 
+## Compile web/sensor.min.js
+
+1. `cd packages/web`
+1. `npm run web`
+
 ## Publish packages
 
 1. `cd path/to/biostamp-js`
