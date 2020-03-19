@@ -461,7 +461,6 @@ class BRC3Sensor {
     }
 
     if (page.annotation) {
-      console.log(page);
       page.annotation = BRC3Utils.decodeMessage(page.annotation.annotationData);
     }
   }

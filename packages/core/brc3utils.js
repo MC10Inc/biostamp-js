@@ -1,3 +1,5 @@
+const BROWSER = typeof navigator !== "undefined";
+
 let crc16 = (data) => {
   let crc = 0xffff;
   let i;
@@ -15,10 +17,18 @@ let crc16 = (data) => {
     crc &= 0xffff;
   }
   return crc;
-}
+};
+
+let toBytes = (arr) => {
+  if (BROWSER) {
+    return Uint8Array.from(arr);
+  }
+
+  return Buffer.from(arr);
+};
 
 let encodeMessage = (str) => {
-  if (typeof navigator !== "undefined") {
+  if (BROWSER) {
     return new TextEncoder().encode(str);
   }
 
@@ -26,16 +36,8 @@ let encodeMessage = (str) => {
 };
 
 let decodeMessage = (buffer) => {
-  if (typeof navigator !== "undefined") {
-    if (buffer instanceof Array) {
-      buffer = Uint8Array.from(buffer);
-    }
-
+  if (BROWSER) {
     return new TextDecoder().decode(buffer);
-  }
-
-  if (buffer instanceof Array) {
-    buffer = Buffer.from(buffer);
   }
 
   return buffer.toString("utf-8");
@@ -43,6 +45,7 @@ let decodeMessage = (buffer) => {
 
 module.exports = {
   crc16,
+  toBytes,
   encodeMessage,
   decodeMessage
 };

@@ -1,4 +1,4 @@
-let { crc16 } = require("./brc3utils.js");
+let { crc16, toBytes } = require("./brc3utils.js");
 
 class BRC3PacketHandler {
   constructor(onPacketComplete) {
@@ -43,7 +43,7 @@ class BRC3PacketHandler {
       }
 
       if (this.onPacketComplete) {
-        this.onPacketComplete(this.data);
+        this.onPacketComplete(toBytes(this.data));
       }
     }
   }
