@@ -306,7 +306,7 @@ class NordicSensor extends BRC3Sensor {
 
       this.ignoreWriteChange = true;
 
-      driver.writeCharacteristicValue(this.commandChar.instanceId, command, true, (err) => {
+      driver.writeCharacteristicValue(this.commandChar.instanceId, Array.from(command), true, (err) => {
         if (err) {
           this.respHandler = undefined;
           reject(Error(`Failed to write to command characteristic: ${err}.`));
@@ -325,6 +325,7 @@ class NordicSensor extends BRC3Sensor {
     if (!this.dataWritePackets) {
       return;
     }
+
     var p = this.dataWritePackets.shift();
 
     if (p) {
