@@ -4,15 +4,14 @@ let BRC3Streaming = require("./brc3streaming.js");
 let BRC3PacketHandler = require("./brc3packet.js");
 let BRC3Utils = require("./brc3utils.js");
 
-let schema = BRC3Schema;
-let { Command, Request, Response } = schema;
+let { Command, Request, Response } = BRC3Schema;
 
 const FLASH_PAGE_BYTES = 256;
 
 class BRC3Sensor {
   constructor() {
     this.packetHandler = new BRC3PacketHandler(this.handlePayload.bind(this));
-    this.streaming = new BRC3Streaming(schema.StreamingType);
+    this.streaming = new BRC3Streaming();
   }
 
   request(request, dataWritePackets = undefined) {
@@ -46,9 +45,7 @@ class BRC3Sensor {
   }
 
   handlePayload(payload) {
-    let { DataMessage } = schema;
-
-    let msg = DataMessage.decode(payload);
+    let msg = BRC3Schema.DataMessage.decode(payload);
 
     if (msg.streamingSamples) {
       this.streaming.handleStreamingSamples(msg.streamingSamples);
@@ -64,16 +61,16 @@ class BRC3Sensor {
     }
   }
 
-  startSensing(config, duration = 0, metadata = "") {
-    let { SensingStartCommandParam, SensorConfig } = schema;
+  startSensing(config, maxDuration = 0, strMetadata = "") {
+    let metadata = BRC3Utils.encodeMessage(strMetadata);
 
-    let request = Request.create({
+    let request = Request.fromObject({
       command: Command.SENSING_START,
-      sensingStart: SensingStartCommandParam.create({
-        config: SensorConfig.fromObject(config),
-        maxDuration: duration,
-        metadata: BRC3Utils.encodeMessage(metadata)
-      })
+      sensingStart: {
+        config,
+        maxDuration,
+        metadata,
+      }
     });
 
     return this.request(request).then((response) => {
@@ -130,11 +127,11 @@ class BRC3Sensor {
   }
 
   setTime(timestamp = Date.now() / 1000) {
-    let { TimeSetCommandParam } = schema;
-
-    let request = Request.create({
+    let request = Request.fromObject({
       command: Command.TIME_SET,
-      timeSet: TimeSetCommandParam.create({ timestamp })
+      timeSet: {
+        timestamp
+      }
     });
 
     return this.request(request).then((response) => null);
@@ -147,11 +144,12 @@ class BRC3Sensor {
   }
 
   getRecordingInfo(index = null, recordingId = null) {
-    let { RecordingGetInfoCommandParam } = schema;
-
-    let request = Request.create({
+    let request = Request.fromObject({
       command: Command.RECORDING_GET_INFO,
-      recordingGetInfo: RecordingGetInfoCommandParam.create({ index, recordingId })
+      recordingGetInfo: {
+        index,
+        recordingId
+      }
     });
 
     return this.request(request).then((response) => {
@@ -205,33 +203,35 @@ class BRC3Sensor {
   }
 
   flashEraseBlock(address) {
-    let { FlashEraseBlockCommandParam } = schema;
-
-    let request = Request.create({
+    let request = Request.fromObject({
       command: Command.FLASH_ERASE_BLOCK,
-      flashEraseBlock: FlashEraseBlockCommandParam.create({ address })
+      flashEraseBlock: {
+        address
+      }
     });
 
     return this.request(request).then((response) => null);
   }
 
   flashWritePage(address, data) {
-    let { FlashWritePageCommandParam } = schema;
-
-    let request = Request.create({
+    let request = Request.fromObject({
       command: Command.FLASH_WRITE_PAGE,
-      flashWritePage: FlashWritePageCommandParam.create({ address, data })
+      flashWritePage: {
+        address,
+        data
+      }
     });
 
     return this.request(request).then((response) => null);
   }
 
   flashReadData(address, length) {
-    let { FlashReadDataCommandParam } = schema;
-
-    let request = Request.create({
+    let request = Request.fromObject({
       command: Command.FLASH_READ_DATA,
-      flashReadData: FlashReadDataCommandParam.create({ address, length })
+      flashReadData: {
+        address,
+        length
+      }
     });
 
     return this.request(request).then((response) => {
@@ -250,11 +250,11 @@ class BRC3Sensor {
   }
 
   startStreaming(type, listener) {
-    let { StreamingStartCommandParam } = schema;
-
-    let request = Request.create({
+    let request = Request.fromObject({
       command: Command.STREAMING_START,
-      streamingStart: StreamingStartCommandParam.create({ type })
+      streamingStart: {
+        type
+      }
     });
 
     return this.request(request).then((response) => {
@@ -269,25 +269,25 @@ class BRC3Sensor {
   stopStreaming(type) {
     this.streaming.disableStream(type);
 
-    let { StreamingStopCommandParam } = schema;
-
-    let request = Request.create({
+    let request = Request.fromObject({
       command: Command.STREAMING_STOP,
-      streamingStop: StreamingStopCommandParam.create({ type })
+      streamingStop: {
+        type
+      }
     });
 
     return this.request(request).then((response) => null);
   }
 
-  annotate(message, timestamp) {
-    let { AnnotateCommandParam } = schema;
+  annotate(message, overrideTimestamp) {
+    let annotationData = BRC3Utils.encodeMessage(message);
 
-    let request = Request.create({
+    let request = Request.fromObject({
       command: Command.ANNOTATE,
-      annotate: AnnotateCommandParam.create({
-        annotationData: BRC3Utils.encodeMessage(message),
-        overrideTimestamp: timestamp
-      })
+      annotate: {
+        annotationData,
+        overrideTimestamp
+      }
     });
 
     return this.request(request).then((response) => {
@@ -296,39 +296,40 @@ class BRC3Sensor {
   }
 
   readRecording(recordingId, firstPage) {
-    let { RecordingReadCommandParam } = schema;
-
-    let request = Request.create({
+    let request = Request.fromObject({
       command: Command.RECORDING_READ,
-      recordingRead: RecordingReadCommandParam.create({ recordingId, firstPage })
+      recordingRead: {
+        recordingId,
+        firstPage
+      }
     });
 
     return this.request(request).then((response) => null);
   }
 
-  afe4900DynamicConfig(config) {
-    let { AFE4900Dynamic, AFE4900DynamicConfigCommandParam } = schema;
-
-    let request = Request.create({
+  afe4900DynamicConfig(dynamic) {
+    let request = Request.fromObject({
       command: Command.AFE4900_DYNAMIC_CONFIG,
-      afe4900DynamicConfig: AFE4900DynamicConfigCommandParam.create({
-        dynamic: AFE4900Dynamic.fromObject(config)
-      })
+      afe4900DynamicConfig: {
+        dynamic
+      }
     });
 
     return this.request(request).then((response) => null);
   }
 
   uploadStart(file) {
-    let { UploadStartCommandParam } = schema;
+    let type = BRC3Schema.UploadType.FIRMWARE_IMAGE;
+    let size = file.length;
+    let crc = BRC3Utils.crc16(file);
 
-    let request = Request.create({
+    let request = Request.fromObject({
       command: Command.UPLOAD_START,
-      uploadStart: UploadStartCommandParam.create({
-        type: schema.UploadType.FIRMWARE_IMAGE,
-        size: file.length,
-        crc: BRC3Utils.crc16(file)
-      })
+      uploadStart: {
+        type,
+        size,
+        crc
+      }
     });
 
     return this.request(request).then((response) => {
@@ -337,14 +338,14 @@ class BRC3Sensor {
   }
 
   uploadWritePage(file, offset) {
-    let { UploadWritePageCommandParam } = schema;
+    let data = file.slice(offset, offset + FLASH_PAGE_BYTES);
 
-    let request = Request.create({
+    let request = Request.fromObject({
       command: Command.UPLOAD_WRITE_PAGE,
-      uploadWritePage: UploadWritePageCommandParam.create({
-        offset: offset,
-        data: file.slice(offset, offset + FLASH_PAGE_BYTES)
-      })
+      uploadWritePage: {
+        offset,
+        data
+      }
     });
 
     return this.request(request).then((response) => null);
@@ -467,11 +468,11 @@ class BRC3Sensor {
   }
 
   simulateFault(fault) {
-    let { SimulateFaultCommandParam } = schema;
-
-    let request = Request.create({
+    let request = Request.fromObject({
       command: Command.SIMULATE_FAULT,
-      simulateFault: SimulateFaultCommandParam.create({ fault })
+      simulateFault: {
+        fault
+      }
     });
 
     return this.request(request).then((response) => null);
@@ -503,11 +504,11 @@ class BRC3Sensor {
   }
 
   readFaultLog(index) {
-    let { FaultLogReadCommandParam, FaultInfo } = schema;
-
-    let request = Request.create({
+    let request = Request.fromObject({
       command: Command.FAULT_LOG_READ,
-      faultLogRead: FaultLogReadCommandParam.create({ index })
+      faultLogRead: {
+        index
+      }
     });
 
     return this.request(request).then((response) => {
@@ -533,7 +534,7 @@ let props = [
 ];
 
 props.forEach((prop) => {
-  BRC3Sensor[prop] = schema[prop];
+  BRC3Sensor[prop] = BRC3Schema[prop];
 });
 
 module.exports = BRC3Sensor;

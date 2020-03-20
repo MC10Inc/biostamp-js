@@ -1,8 +1,9 @@
+let BRC3Schema = require("./brc3schema.js");
+
 class BRC3Streaming {
   constructor(types) {
     this.listeners = {};
     this.infos = {};
-    this.types = types;
   }
 
   enableStream(type, info, listener) {
@@ -34,7 +35,7 @@ class BRC3Streaming {
   }
 
   handleAD5940(ss) {
-    let listener = this.listeners[this.types.AD5940];
+    let listener = this.listeners[BRC3Schema.StreamingType.AD5940];
     let ad5940 = ss.ad5940;
 
     if (!listener) {
@@ -54,7 +55,7 @@ class BRC3Streaming {
   }
 
   handleAFE4900(ss) {
-    let type = this.types.AFE4900;
+    let type = BRC3Schema.StreamingType.AFE4900;
     let listener = this.listeners[type];
     let afe = ss.afe4900;
 
@@ -87,7 +88,7 @@ class BRC3Streaming {
   }
 
   handleEnvironment(ss) {
-    let type = this.types.ENVIRONMENT;
+    let type = BRC3Schema.StreamingType.ENVIRONMENT;
     let listener = this.listeners[type];
     let info = this.infos[type];
     let environment = ss.environment;
@@ -111,7 +112,7 @@ class BRC3Streaming {
   }
 
   handleMotion(ss) {
-    let type = this.types.MOTION;
+    let type = BRC3Schema.StreamingType.MOTION;
     let listener = this.listeners[type];
     let info = this.infos[type];
     let motion = ss.motion;
@@ -150,7 +151,7 @@ class BRC3Streaming {
   }
 
   handleRotation(ss) {
-    let type = this.types.MOTION;
+    let type = BRC3Schema.StreamingType.MOTION;
     let listener = this.listeners[type];
     let info = this.infos[type];
     let rotation = ss.rotation;

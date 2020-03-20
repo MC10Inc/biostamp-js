@@ -326,7 +326,7 @@ Start sensing. This method resolves with a `recordingId` if recording is enabled
 
 _The time must be set at some point before sensing. See setTime()._
 
-  * **config**: A configuration object in the form `{ recordingEnabled, ad5940, afe4900, environment, motion }`, as described below.
+  * **config**: A plain object in the form `{ recordingEnabled, ad5940, afe4900, environment, motion }`, as described below.
   * **duration**: The number of seconds after which to stop sensing. If 0 (the default), sensing continues until you call `stopSensing()`.
   * **metadata**: An optional UTF-8 string to describe a recording, up to 128 bytes, if recording is enabled in the sensing configuration.
 
@@ -336,9 +336,9 @@ sensor.startSensing(config, 0, metadata).then((recordingId) => {
 });
 ```
 
-At least one of `ad5940`, `afe4900`, `environment` or `motion` must be set in the sensing configuration.
+At least one of `ad5940`, `afe4900`, `environment` or `motion` must be set in the configuration object.
 
-The property `recordingEnabled` is a boolean indicating whether to store data on the sensor for later retrieval.
+The property `recordingEnabled` indicates whether to store data on the sensor for later retrieval.
 
 The property `ad5940` is an object in the form `{ measureBaseline, mode }`.
 
