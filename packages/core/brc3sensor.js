@@ -1,12 +1,11 @@
-let pb = require("protobufjs");
-let proto = require("./brc3.json");
-let schema = pb.Root.fromJSON(proto);
-let { Command, Request, Response } = schema;
-
+let BRC3Schema = require("./brc3schema.js");
 let BRC3Error = require("./brc3error.js");
 let BRC3Streaming = require("./brc3streaming.js");
 let BRC3PacketHandler = require("./brc3packet.js");
 let BRC3Utils = require("./brc3utils.js");
+
+let schema = BRC3Schema;
+let { Command, Request, Response } = schema;
 
 const FLASH_PAGE_BYTES = 256;
 
