@@ -123,21 +123,21 @@ class BRC3Streaming {
 
     let axes = [];
 
-    if (motion.accelX) {
+    if (motion.accelX.length) {
       axes = axes.concat([
         this.getDifferentialArray(motion.accelX, info.accelGScale),
         this.getDifferentialArray(motion.accelY, info.accelGScale),
         this.getDifferentialArray(motion.accelZ, info.accelGScale)
       ]);
     }
-    if (motion.gyroX) {
+    if (motion.gyroX.length) {
       axes = axes.concat([
         this.getDifferentialArray(motion.gyroX, info.gyroDpsScale),
         this.getDifferentialArray(motion.gyroY, info.gyroDpsScale),
         this.getDifferentialArray(motion.gyroZ, info.gyroDpsScale)
       ]);
     }
-    if (motion.magX) {
+    if (motion.magX.length) {
       axes = axes.concat([
         this.getDifferentialArray(motion.magX, info.magUtScale),
         this.getDifferentialArray(motion.magY, info.magUtScale),
