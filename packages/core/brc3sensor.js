@@ -39,9 +39,7 @@ class BRC3Sensor {
   }
 
   command(command) {
-    let request = Request.create({ command });
-
-    return this.request(request).then((response) => null);
+    return this.request(Request.create({ command }));
   }
 
   handlePacket(packet) {
@@ -85,65 +83,49 @@ class BRC3Sensor {
   }
 
   stopSensing() {
-    let request = Request.create({
-      command: Command.SENSING_STOP
-    });
-
-    return this.request(request).then((response) => {
+    return this.command(Command.SENSING_STOP).then((response) => {
       return response.sensingStop.recordingId || null;
     });
   }
 
   powerOff() {
-    return this.command(Command.POWER_OFF);
+    return this.command(Command.POWER_OFF).then(() => null);
   }
 
   reset() {
-    return this.command(Command.RESET);
+    return this.command(Command.RESET).then(() => null);
   }
 
   blinkLeds() {
-    return this.command(Command.BLINK_LEDS);
+    return this.command(Command.BLINK_LEDS).then(() => null);
   }
 
   clearOldestRecording() {
-    return this.command(Command.RECORDING_CLEAR_OLDEST);
+    return this.command(Command.RECORDING_CLEAR_OLDEST).then(() => null);
   }
 
   clearAllRecordings() {
-    return this.command(Command.CLEAR_ALL_RECORDINGS);
+    return this.command(Command.CLEAR_ALL_RECORDINGS).then(() => null);
   }
 
   loadFirmwareImage() {
-    return this.command(Command.LOAD_FIRMWARE_IMAGE);
+    return this.command(Command.LOAD_FIRMWARE_IMAGE).then(() => null);
   }
 
   getTemperature() {
-    let request = Request.create({
-      command: Command.TEMPERATURE_GET
-    });
-
-    return this.request(request).then((response) => {
+    return this.command(Command.TEMPERATURE_GET).then((response) => {
       return response.temperatureGet.temperatureC;
     });
   }
 
   getPressure() {
-    let request = Request.create({
-      command: Command.PRESSURE_GET
-    });
-
-    return this.request(request).then((response) => {
+    return this.command(Command.PRESSURE_GET).then((response) => {
       return response.pressureGet.pascals;
     });
   }
 
   getTime() {
-    let request = Request.create({
-      command: Command.TIME_GET
-    });
-
-    return this.request(request).then((response) => {
+    return this.command(Command.TIME_GET).then((response) => {
       return response.timeGet.timestamp;
     });
   }
@@ -160,11 +142,7 @@ class BRC3Sensor {
   }
 
   getRecordingFreeSpace() {
-    let request = Request.create({
-      command: Command.RECORDING_GET_FREE_SPACE
-    });
-
-    return this.request(request).then((response) => {
+    return this.command(Command.RECORDING_GET_FREE_SPACE).then((response) => {
       return response.recordingGetFreeSpace;
     });
   }
@@ -186,11 +164,7 @@ class BRC3Sensor {
   }
 
   countRecordings() {
-    let request = Request.create({
-      command: Command.RECORDING_GET_COUNT
-    });
-
-    return this.request(request).then((response) => {
+    return this.command(Command.RECORDING_GET_COUNT).then((response) => {
       return response.recordingGetCount.count;
     });
   }
@@ -219,22 +193,14 @@ class BRC3Sensor {
   }
 
   getSystemStatus() {
-    let request = Request.create({
-      command: Command.SYSTEM_STATUS
-    });
-
-    return this.request(request).then((response) => {
+    return this.command(Command.SYSTEM_STATUS).then((response) => {
       return response.systemStatus;
     });
 
   }
 
   getVersion() {
-    let request = Request.create({
-      command: Command.VERSION_GET
-    });
-
-    return this.request(request).then((response) => {
+    return this.command(Command.VERSION_GET).then((response) => {
       return response.versionGet;
     });
   }
@@ -275,11 +241,7 @@ class BRC3Sensor {
   }
 
   getSensingInfo() {
-    let request = Request.create({
-      command: Command.SENSING_GET_INFO
-    });
-
-    return this.request(request).then((response) => {
+    return this.command(Command.SENSING_GET_INFO).then((response) => {
       if (response.sensingGetInfo.enabled) {
         return response.sensingGetInfo;
       }
@@ -419,7 +381,7 @@ class BRC3Sensor {
   }
 
   uploadFinish() {
-    return this.command(Command.UPLOAD_FINISH);
+    return this.command(Command.UPLOAD_FINISH).then(() => null);
   }
 
   padFirmwareImage(image) {
@@ -494,21 +456,13 @@ class BRC3Sensor {
   }
 
   getFaultInfo() {
-    let request = Request.create({
-      command: Command.FAULT_GET_INFO
-    });
-
-    return this.request(request).then((response) => {
+    return this.command(Command.FAULT_GET_INFO).then((response) => {
       return response.faultGetInfo;
     });
   }
 
   getRTOSDebugInfo() {
-    let request = Request.create({
-      command: Command.DEBUG_RTOS_GET_INFO
-    });
-
-    return this.request(request).then((response) => {
+    return this.command(Command.DEBUG_RTOS_GET_INFO).then((response) => {
       return response.debugRtosGetInfo;
     });
   }
@@ -517,7 +471,7 @@ class BRC3Sensor {
     let { SimulateFaultCommandParam } = schema;
 
     let request = Request.create({
-      command: SIMULATE_FAULT,
+      command: Command.SIMULATE_FAULT,
       simulateFault: SimulateFaultCommandParam.create({ fault })
     });
 
@@ -525,7 +479,7 @@ class BRC3Sensor {
   }
 
   clearFaultLogs() {
-    return this.command(Command.FAULT_LOG_CLEAR);
+    return this.command(Command.FAULT_LOG_CLEAR).then(() => null);
   }
 
   getFaultLogs() {
