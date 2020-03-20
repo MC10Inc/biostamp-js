@@ -85,27 +85,39 @@ class BRC3Sensor {
   }
 
   powerOff() {
-    return this.command(Command.POWER_OFF).then(() => null);
+    return this.command(Command.POWER_OFF).then((response) => {
+      return null;
+    });
   }
 
   reset() {
-    return this.command(Command.RESET).then(() => null);
+    return this.command(Command.RESET).then((response) => {
+      return null;
+    });
   }
 
   blinkLeds() {
-    return this.command(Command.BLINK_LEDS).then(() => null);
+    return this.command(Command.BLINK_LEDS).then((response) => {
+      return null;
+    });
   }
 
   clearOldestRecording() {
-    return this.command(Command.RECORDING_CLEAR_OLDEST).then(() => null);
+    return this.command(Command.RECORDING_CLEAR_OLDEST).then((response) => {
+      return null;
+    });
   }
 
   clearAllRecordings() {
-    return this.command(Command.CLEAR_ALL_RECORDINGS).then(() => null);
+    return this.command(Command.CLEAR_ALL_RECORDINGS).then((response) => {
+      return null;
+    });
   }
 
   loadFirmwareImage() {
-    return this.command(Command.LOAD_FIRMWARE_IMAGE).then(() => null);
+    return this.command(Command.LOAD_FIRMWARE_IMAGE).then((response) => {
+      return null;
+    });
   }
 
   getTemperature() {
@@ -134,7 +146,9 @@ class BRC3Sensor {
       }
     });
 
-    return this.request(request).then((response) => null);
+    return this.request(request).then((response) => {
+      return null;
+    });
   }
 
   getRecordingFreeSpace() {
@@ -210,7 +224,9 @@ class BRC3Sensor {
       }
     });
 
-    return this.request(request).then((response) => null);
+    return this.request(request).then((response) => {
+      return null;
+    });
   }
 
   flashWritePage(address, data) {
@@ -222,7 +238,9 @@ class BRC3Sensor {
       }
     });
 
-    return this.request(request).then((response) => null);
+    return this.request(request).then((response) => {
+      return null;
+    });
   }
 
   flashReadData(address, length) {
@@ -276,7 +294,9 @@ class BRC3Sensor {
       }
     });
 
-    return this.request(request).then((response) => null);
+    return this.request(request).then((response) => {
+      return null;
+    });
   }
 
   annotate(message, overrideTimestamp) {
@@ -304,7 +324,9 @@ class BRC3Sensor {
       }
     });
 
-    return this.request(request).then((response) => null);
+    return this.request(request).then((response) => {
+      return null;
+    });
   }
 
   afe4900DynamicConfig(dynamic) {
@@ -315,7 +337,9 @@ class BRC3Sensor {
       }
     });
 
-    return this.request(request).then((response) => null);
+    return this.request(request).then((response) => {
+      return null;
+    });
   }
 
   uploadStart(file) {
@@ -348,7 +372,9 @@ class BRC3Sensor {
       }
     });
 
-    return this.request(request).then((response) => null);
+    return this.request(request).then((response) => {
+      return null;
+    });
   }
 
   uploadFirmwareImage(image) {
@@ -374,14 +400,18 @@ class BRC3Sensor {
         command: Command.UPLOAD_WRITE_PAGES_FAST
       });
 
-      return this.request(request, packets).then((response) => null);
+      return this.request(request, packets).then((response) => {
+        return null;
+      });
     }).then(() => {
       return this.uploadFinish();
     });
   }
 
   uploadFinish() {
-    return this.command(Command.UPLOAD_FINISH).then(() => null);
+    return this.command(Command.UPLOAD_FINISH).then((response) => {
+      return null;
+    });
   }
 
   padFirmwareImage(image) {
@@ -475,11 +505,15 @@ class BRC3Sensor {
       }
     });
 
-    return this.request(request).then((response) => null);
+    return this.request(request).then((response) => {
+      return null;
+    });
   }
 
   clearFaultLogs() {
-    return this.command(Command.FAULT_LOG_CLEAR).then(() => null);
+    return this.command(Command.FAULT_LOG_CLEAR).then((response) => {
+      return null;
+    });
   }
 
   getFaultLogs() {
