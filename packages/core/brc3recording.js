@@ -121,11 +121,10 @@ class BRC3Recording {
   processEnvironment(page) {
     let series = [
       page.environment.pascals,
-      page.environment.temperatureC,
-      page.environment.externalTemperatureC
+      page.environment.temperatureC
     ];
 
-    let scales = [1, 1, 1];
+    let scales = [1, 1];
 
     this.processSeries(page, series, scales, this.environment);
   }
