@@ -1,7 +1,7 @@
 {
-  "name": "@mc10inc/biostamp-js-core",
-  "version": "1.0.8",
-  "description": "Biostamp® 3.0 JavaScript SDK Core",
+  "name": "@mc10inc/biostamp-js-db",
+  "version": "1.0.0",
+  "description": "Biostamp® 3.0 JavaScript SDK DB Module",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
@@ -9,16 +9,16 @@
   "repository": {
     "type": "git",
     "url": "git+ssh://git@github.com/mc10inc/biostamp-js.git",
-    "directory": "packages/core"
+    "directory": "packages/db"
   },
   "author": "MC10, Inc.",
   "license": "SEE LICENSE IN LICENSE.md",
-  "dependencies": {
-    "@mc10inc/biostamp-js-db": "^1.0.0",
-    "protobufjs": "^6.8.9"
-  },
   "bugs": {
     "url": "https://github.com/mc10inc/biostamp-js/issues"
   },
-  "homepage": "https://github.com/mc10inc/biostamp-js#readme"
+  "homepage": "https://github.com/mc10inc/biostamp-js#readme",
+  "dependencies": {
+    "sqlite3": "^4.1.1"
+  },
+  "devDependencies": {}
 }

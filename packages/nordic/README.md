@@ -11,7 +11,7 @@ See full documentation at [https://github.com/mc10inc/biostamp-js][3].
 ## Usage
 
 ``` javascript
-let { BiostampSensor, BiostampRecording, BiostampError } = require("@mc10inc/biostamp-js-nordic");
+let { BiostampSensor, BiostampDb, BiostampError } = require("@mc10inc/biostamp-js-nordic");
 
 BiostampSensor.connect("/dev/tty.usbmodem14112", "f2:fb:48:02:13:a8", onDisconnect).then((sensor) => {
   sensor.blinkLeds();

@@ -420,54 +420,15 @@ class BRC3Sensor {
     }
   }
 
-  processRecordingPage(page) {
-    let differentialToAbsolute = (a) => {
-      if (!a) {
-        return;
-      }
-
-      let value = 0;
-
-      for (let i = 0; i < a.length; i++) {
-        value += a[i];
-        a[i] = value;
-      }
-    };
-
-    if (!page.pageNumber) {
-      page.pageNumber = 0;
-    }
-
-    if (page.motion) {
-      differentialToAbsolute(page.motion.accelX);
-      differentialToAbsolute(page.motion.accelY);
-      differentialToAbsolute(page.motion.accelZ);
-      differentialToAbsolute(page.motion.gyroX);
-      differentialToAbsolute(page.motion.gyroY);
-      differentialToAbsolute(page.motion.gyroZ);
-    }
-
-    if (page.afe4900) {
-      differentialToAbsolute(page.afe4900.ecg);
-      differentialToAbsolute(page.afe4900.ppg);
-    }
-
-    if (page.annotation) {
-      page.annotation = BRC3Utils.decodeMessage(page.annotation.annotationData);
-    }
-  }
-
-  downloadRecording(recInfo, pageListener, pageNum = 0) {
-    let n = pageNum;
+  downloadRecording(recInfo, pageListener, startPage = 0, processed = true) {
+    let n = startPage;
 
     let downloadNext = () => {
       let getPages = new Promise((resolve, reject) => {
-        this.recordingPagesListener = (pages) => {
-          n = (pages[pages.length - 1].pageNumber || 0) + 1;
-
-          pages.map(this.processRecordingPage);
-
-          pageListener(pages);
+        this.recordingPagesListener = (recPages) => {
+          recPages.forEach((recPage) => {
+            pageListener(n++, processed ? this.processPage(recPage, recInfo) : recPage);
+          });
 
           resolve();
         };
@@ -548,6 +509,50 @@ class BRC3Sensor {
     return this.request(request).then((response) => {
       return response.faultLogRead.faultInfo || null;
     });
+  }
+
+  encode(protoObj, protoName) {
+    return BRC3Schema[protoName].encode(protoObj).finish();
+  }
+
+  decode(protoBytes, protoName) {
+    return BRC3Schema[protoName].decode(protoBytes);
+  }
+
+  processPage(recPage, recInfo) {
+    let obj = BRC3Schema.RecordingPage.toObject(recPage);
+    let scales = recInfo.rawDataInfo;
+
+    let processSeries = (values, scale) => {
+      let value = 0;
+
+      for (let i = 0; i < values.length; i++) {
+        value += values[i] * scale;
+        values[i] = value;
+      }
+    };
+
+    obj.pageNumber = obj.pageNumber || 0;
+    obj.timestamp = obj.timestamp * scales.timestampScale;
+    obj.samplingPeriod = obj.samplingPeriod * scales.samplingPeriodScale;
+
+    if (obj.motion) {
+      processSeries(obj.motion.accelX, scales.accelGScale);
+      processSeries(obj.motion.accelY, scales.accelGScale);
+      processSeries(obj.motion.accelZ, scales.accelGScale);
+      processSeries(obj.motion.gyroX, scales.gyroDpsScale);
+      processSeries(obj.motion.gyroY, scales.gyroDpsScale);
+      processSeries(obj.motion.gyroZ, scales.gyroDpsScale);
+    }
+    else if (obj.afe4900) {
+      processSeries(obj.afe4900.ecg, scales.afe4900EcgVScale);
+      processSeries(obj.afe4900.ppg, 1);
+    }
+    else if (obj.annotation) {
+      obj.annotation = BRC3Utils.decodeMessage(obj.annotation.annotationData);
+    }
+
+    return obj;
   }
 }
 

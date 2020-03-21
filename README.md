@@ -10,7 +10,7 @@ Build JavaScript-based applications that communicate with BioStamp® 3.0 sensors
   * [Connecting to a sensor](#connecting-to-a-sensor)
   * [Issuing sensor commands](#issuing-sensor-commands)
   * [BiostampSensor](#biostampsensor)
-  * [BiostampRecording](#biostamprecording)
+  * [BiostampDb](#biostampdb)
   * [BiostampError](#biostamperror)
 
 ## Supported platforms
@@ -473,63 +473,46 @@ sensor.clearAllRecordings().then(() => {
 });
 ```
 
-### downloadRecording(recInfo, onPages [, startPage])
+### downloadRecording(recInfo, onPage [, startPage])
 
 Download pages of raw recording data.
 
   * **recInfo**: A recording info object obtained through `getRecordingInfo()` or `listRecordings()`.
-  * **onPages(pages)**: A function to receive an array of recording pages.
+  * **onPage(pageNum, pageData)**: A function to handle a recording page.
   * **startPage**: The first page to download (default is 0).
 
 ``` javascript
-let allPages = [];
+let pages = [];
 
-sensor.downloadRecording(recInfo, (pages) => {
-  console.log(`Received ${pages.length} pages starting at page ${pages[0].pageNumber}`);
-  allPages = allPages.concat(pages);
+sensor.downloadRecording(recInfo, (pageNum, pageData) => {
+  console.log(`Received page ${pageNum} of ${recInfo.numPages}`);
+  pages.push(pageData);
 }).then(() => {
-  console.log(allPages);
+  console.log(pages);
 });
 ```
 
-If a download is interrupted, you can resume the operation by starting with the next `pageNumber`.
+If a download is interrupted, you can resume the operation by starting again with a page number greater than zero.
 
-The contents of each page depend on the sensing configuration. For example, a page might contain `motion` samples but no `afe4900` samples:
+The contents of each page may vary. For example, a page might contain `motion` samples but no `afe4900` samples:
 
 ``` javascript
-[
-  {
-    pageNumber: 100,
-    timestamp: 51759495851679,
-    samplingPeriod: 13107,
-    environment: undefined,
-    motion: {
-      accelXList: [...],
-      accelYList: [...],
-      accelZList: [...],
-      gyroXList: [...],
-      gyroYList: [...],
-      gyroZList: [...],
-      magXList: [],
-      magYList: [],
-      magZList: []
-    },
-    afe4900: undefined,
-    ad5940: undefined,
-    annotations: [...]
-  },
-  {
-    pageNumber: 101,
-    timestamp: 51759495855126,
-    ...
-  },
-  ...
-]
+{
+  pageNumber: 104,
+  timestamp: 1584725850.9328308,
+  samplingPeriod: 0.007893085479736328,
+  motion: {
+    accelX: [ 0.038575395941734314, ...],
+    accelY: [ 0.026367992162704468, ...],
+    accelZ: [ 0.9946592599153519, ...],
+    gyroX: [ 0.47303689643740654, ...],
+    gyroY: [ 0.22888882085680962, ...],
+    gyroZ: [ 0.030518509447574615, ...]
+  }
+}
 ```
 
-This data is raw, or unprocessed. Use the `BiostampRecording` class, described below, to process the samples and convert the data structure into a more usable form.
-
-_Download speeds may range from 10KB/sec to 30KB/sec depending on the environment._
+_Instead of downloading recording data directly, you can use the `BiostampDb` class, described below, to manage this process for you._
 
 ### uploadFirmwareImage(image)
 
@@ -626,87 +609,69 @@ sensor.powerOff().then(() => {
 console.log(sensor.name); // BRC3ea22
 ```
 
-## BiostampRecording
+## BiostampDb
 
-The `BiostampRecording` class processes samples from raw recording pages and outputs the results in a human-readable format.
+The `BiostampDb` class downloads raw recording data from a sensor, saves it to a local database and prepares the data for export.
 
-### BiostampRecording(recInfo)
+This class uses [SQLite][16] in the Node.js and Nordic platforms and [IndexedDB][17] in the web browser.
 
-Construct a BiostampRecording object.
+### BiostampDb(path)
 
-  * **recInfo**: A recording info object obtained through `sensor.getRecordingInfo()` or `sensor.listRecordings()`.
+Construct a BiostampDb object.
 
-``` javascript
-let recording = new BiostampRecording(recInfo);
-```
-
-### processPage(page)
-
-Process a recording page.
-
-  * **page**: A page obtained through `sensor.downloadRecording()`.
+  * **path**: Path to the database file. Default is "./biostamp.db".
 
 ``` javascript
-sensor.getRecordingInfo(0).then((recInfo) => {
-  let recording = new BiostampRecording(recInfo);
-
-  return sensor.downloadRecording(recInfo, (pages) => {
-    pages.forEach((page) => {
-      recording.processPage(page);
-    });
-  }).then(() => {
-    let result = recording.toObject();
-  });
-});
+let db = new BiostampDb();
 ```
 
-### toObject()
+## download(sensor, recInfo)
 
-Output results after all pages have been processed. This method returns an object, which can be serialized with `JSON.stringify()`.
+xxx
 
 ``` javascript
-let result = recording.toObject();
+xxx
 ```
 
-In **Node.js**, you can use the [File System][5] API to save the data to disk:
+## list()
+
+xxx
 
 ``` javascript
-let fs = require("fs");
-
-let text = JSON.stringify(recording.toObject());
-
-fs.writeFileSync("recording.json", text, "utf8");
+xxx
 ```
 
-In the **web browser**, you can use [createObjectURL][7] and a temporary anchor tag:
+## exportCsv(id)
+
+xxx
 
 ``` javascript
-let text = JSON.stringify(recording.toObject());
-
-let anchor = document.createElement("a");
-let blob = new Blob([text], { type: "text/json" });
-let url = URL.createObjectURL(blob);
-
-document.body.appendChild(anchor);
-
-anchor.href = url;
-anchor.download = "recording.json";
-anchor.click();
-
-document.body.removeChild(anchor);
-
-URL.revokeObjectURL(url);
+xxx
 ```
 
-### toCsv(feature)
+## exportJson(id)
 
-Output CSV for the given feature—one of "motion", "afe4900", "ad5940", "environment" or "annotation"—after all pages have been processed. This method returns a string.
+xxx
 
 ``` javascript
-let result = recording.toCsv("motion");
+xxx
 ```
 
-Refer to the examples in `toObject()`, above, to create a file of type "text/csv".
+## read(id, onRow)
+
+xxx
+
+``` javascript
+xxx
+```
+
+## delete(id)
+
+xxx
+
+``` javascript
+xxx
+```
 
 ## BiostampError
 
@@ -771,3 +736,5 @@ BiostampError.RECORDING_NOT_IN_PROGRESS
 [13]: https://github.com/MC10Inc/biostamp-js/packages/150198
 [14]: https://github.com/MC10Inc/biostamp-js/packages/150196
 [15]: https://github.com/MC10Inc/biostamp-js/packages/150195
+[16]: https://www.sqlite.org/
+[17]: https://developer.mozilla.org/en-US/docs/Web/API/IndexedDB_API

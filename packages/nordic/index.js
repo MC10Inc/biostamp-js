@@ -1,4 +1,4 @@
-let { BRC3Sensor, BRC3Recording, BRC3Error } = require("@mc10inc/biostamp-js-core");
+let { BRC3Sensor, BRC3Error } = require("@mc10inc/biostamp-js-core");
 
 let ble = require("pc-ble-driver-js");
 
@@ -341,6 +341,5 @@ class NordicSensor extends BRC3Sensor {
 
 module.exports =  {
   BiostampSensor: NordicSensor,
-  BiostampRecording: BRC3Recording,
   BiostampError: BRC3Error
 };

@@ -7,7 +7,7 @@ See full documentation at [https://github.com/mc10inc/biostamp-js][6].
 ## Usage
 
 ``` javascript
-let { BiostampSensor, BiostampRecording, BiostampError } = require("@mc10inc/biostamp-js-web");
+let { BiostampSensor, BiostampDb, BiostampError } = require("@mc10inc/biostamp-js-web");
 
 BiostampSensor.connect("BRC3", onDisconnect).then((sensor) => {
   sensor.blinkLeds();
@@ -29,7 +29,7 @@ If you prefer to use a precompiled script, simply include `sensor.min.js` in you
 </html>
 ```
 
-This script adds three variables to the window scope: `BiostampSensor`, `BiostampRecording` and `BiostampError`.
+This script adds three variables to the window scope: `BiostampSensor`, `BiostampDb` and `BiostampError`.
 
 ## Examples
 
