@@ -20,11 +20,11 @@ let CREATE_TABLE_PAGES = "CREATE TABLE IF NOT EXISTS pages ("
   + "WITHOUT ROWID";
 
 let INSERT_REC_INFO = "INSERT OR IGNORE INTO recordings ("
-  + "serial, recording_id, num_pages, rec_info) values ("
+  + "serial, recording_id, num_pages, rec_info) VALUES ("
   + "$serial, $recording_id, $num_pages, $rec_info)";
 
 let INSERT_REC_PAGE = "INSERT OR IGNORE INTO pages ("
-  + "fk_id, page_number, page_data) values ("
+  + "fk_id, page_number, page_data) VALUES ("
   + "$fk_id, $page_number, $page_data)";
 
 let SELECT_RECORDINGS = "SELECT * FROM recordings";
@@ -37,7 +37,7 @@ let SELECT_PAGES = "SELECT * FROM pages "
   + "WHERE fk_id = $fk_id "
   + "ORDER BY page_number";
 
-let SELECT_MAX_PAGE_NUM = "SELECT MAX(page_number) as page_number FROM pages "
+let SELECT_MAX_PAGE_NUM = "SELECT MAX(page_number) AS page_number FROM pages "
   + "WHERE fk_id = $fk_id";
 
 let DELETE_RECORDING = "DELETE FROM recordings "
@@ -91,9 +91,7 @@ class BRC3Db {
             dbRun(CREATE_TABLE_RECORDINGS),
             dbRun(CREATE_TABLE_PAGES),
             dbRun(FK_ON)
-          ]).then((statements) => {
-            //
-          }).catch((e) => {
+          ]).catch((e) => {
             console.error(e);
           });
         }
@@ -106,7 +104,7 @@ class BRC3Db {
       $serial: serial,
       $recording_id: recInfo.recordingId,
       $num_pages: recInfo.numPages,
-      $rec_info: BRC3Sensor.encode(recInfo, "RecordingInfo")
+      $rec_info: BRC3Sensor.encodeProto(recInfo, "RecordingInfo")
     };
 
     return dbRun(INSERT_REC_INFO, params);
@@ -147,7 +145,7 @@ class BRC3Db {
         let params = {
           $fk_id: rec.id,
           $page_number: pageNum,
-          $page_data: BRC3Sensor.encode(recPage, "RecordingPage")
+          $page_data: BRC3Sensor.encodeProto(recPage, "RecordingPage")
         };
 
         dbRun(INSERT_REC_PAGE, params).catch((e) => {
@@ -178,7 +176,7 @@ class BRC3Db {
           serial: row.serial,
           recordingId: row.recording_id,
           numPages: row.num_pages,
-          recInfo: BRC3Sensor.decode(row.rec_info, "RecordingInfo")
+          recInfo: BRC3Sensor.decodeProto(row.rec_info, "RecordingInfo")
         });
       };
 
@@ -194,14 +192,14 @@ class BRC3Db {
     return new Promise((resolve, reject) => {
       return this._getRec(serial, recId).then((rec) => {
         let fkId = rec.id;
-        let recInfo = BRC3Sensor.decode(rec.rec_info, "RecordingInfo");
+        let recInfo = BRC3Sensor.decodeProto(rec.rec_info, "RecordingInfo");
 
         let handleRow = (err, row) => {
           if (err) {
             reject(err);
           }
 
-          let recPage = BRC3Sensor.decode(row.page_data, "RecordingPage");
+          let recPage = BRC3Sensor.decodeProto(row.page_data, "RecordingPage");
 
           onRow({
             pageNum: row.page_number,

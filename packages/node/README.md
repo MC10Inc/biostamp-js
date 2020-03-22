@@ -11,7 +11,12 @@ This API depends on [Noble][1]. Refer to the Noble [prerequisites][2] for your p
 ## Usage
 
 ``` javascript
-let { BiostampSensor, BiostampDb, BiostampError } = require("@mc10inc/biostamp-js-node");
+let {
+  BiostampSensor,
+  BiostampDb,
+  BiostampError,
+  BioistampUtils
+} = require("@mc10inc/biostamp-js-node");
 
 BiostampSensor.connect("brc3ea22", onDisconnect).then((sensor) => {
   sensor.blinkLeds();

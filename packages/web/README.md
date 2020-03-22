@@ -7,7 +7,12 @@ See full documentation at [https://github.com/mc10inc/biostamp-js][6].
 ## Usage
 
 ``` javascript
-let { BiostampSensor, BiostampDb, BiostampError } = require("@mc10inc/biostamp-js-web");
+let {
+  BiostampSensor,
+  BiostampDb,
+  BiostampError,
+  BioistampUtils
+} = require("@mc10inc/biostamp-js-web");
 
 BiostampSensor.connect("BRC3", onDisconnect).then((sensor) => {
   sensor.blinkLeds();

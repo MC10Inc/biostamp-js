@@ -11,6 +11,7 @@ Build JavaScript-based applications that communicate with BioStamp® 3.0 sensors
   * [Issuing sensor commands](#issuing-sensor-commands)
   * [BiostampSensor](#biostampsensor)
   * [BiostampDb](#biostampdb)
+  * [BiostampUtils](#biostamputils)
   * [BiostampError](#biostamperror)
 
 ## Supported platforms
@@ -261,7 +262,7 @@ Get information about a recording saved on the sensor, by index _or_ recordingId
 sensor.getRecordingInfo(0).then((recInfo) => {
   console.log(recInfo.durationSec); // 1442
   console.log(recInfo.inProgress); // false
-  console.log(recInfo.metadata); // "subject_01; right_femur"
+  console.log(recInfo.metadata); // [ ... ]
   console.log(recInfo.numPages); // 9127
   console.log(recInfo.rawDataInfo); // { ... }
   console.log(recInfo.recordingId); // 1579711554
@@ -274,6 +275,8 @@ sensor.getRecordingInfo(0).then((recInfo) => {
   }
 });
 ```
+
+If the `metadata` field was encoded from text, use `BiostampUtils.decodeText()`, described below, to decode it.
 
 ``` javascript
 // get by recordingId
@@ -328,7 +331,7 @@ _The time must be set at some point before sensing. See setTime()._
 
   * **config**: A plain object in the form `{ recordingEnabled, ad5940, afe4900, environment, motion }`, as described below.
   * **duration**: The number of seconds after which to stop sensing. If 0 (the default), sensing continues until you call `stopSensing()`.
-  * **metadata**: An optional UTF-8 string to describe a recording, up to 128 bytes, if recording is enabled in the sensing configuration.
+  * **metadata**: A byte array, up to 128 bytes, if recording is enabled in the sensing configuration. Use `BiostampUtils.encodeText()`, described below, to store textual data in this field.
 
 ``` javascript
 sensor.startSensing(config, 0, metadata).then((recordingId) => {
@@ -674,6 +677,24 @@ xxx
 ```
 
 ## deleteAll
+
+xxx
+
+``` javascript
+xxx
+```
+
+## BiostampUtils
+
+## encodeText(text)
+
+xxx
+
+``` javascript
+xxx
+```
+
+## decodeText(bytes)
 
 xxx
 

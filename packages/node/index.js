@@ -1,4 +1,4 @@
-let { BRC3Sensor, BRC3Error } = require("@mc10inc/biostamp-js-core");
+let { BRC3Sensor, BRC3Error, BRC3Utils } = require("@mc10inc/biostamp-js-core");
 let { BRC3Db } = require("@mc10inc/biostamp-js-db");
 
 let noble = require("@abandonware/noble");
@@ -146,5 +146,6 @@ class NodeSensor extends BRC3Sensor {
 module.exports =  {
   BiostampSensor: NodeSensor,
   BiostampDb: BRC3Db,
-  BiostampError: BRC3Error
+  BiostampError: BRC3Error,
+  BiostampUtils: BRC3Utils
 };

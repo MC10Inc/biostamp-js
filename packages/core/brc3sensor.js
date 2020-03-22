@@ -61,9 +61,7 @@ class BRC3Sensor {
     }
   }
 
-  startSensing(config, maxDuration = 0, strMetadata = "") {
-    let metadata = BRC3Utils.encodeText(strMetadata);
-
+  startSensing(config, maxDuration = 0, metadata = null) {
     let request = Request.fromObject({
       command: Command.SENSING_START,
       sensingStart: {
@@ -167,10 +165,7 @@ class BRC3Sensor {
     });
 
     return this.request(request).then((response) => {
-      let info = response.recordingGetInfo.info;
-      info.metadata = BRC3Utils.decodeText(info.metadata);
-
-      return info;
+      return response.recordingGetInfo.info;
     });
   }
 
@@ -421,6 +416,10 @@ class BRC3Sensor {
   }
 
   downloadRecording(recInfo, pageListener, startPage = 0, processed = true) {
+    if (BRC3Schema.RecordingInfo.verify(recInfo)) {
+      throw(new Error("Invalid recording info"));
+    }
+
     let n = startPage;
 
     let downloadNext = () => {
@@ -511,11 +510,11 @@ class BRC3Sensor {
     });
   }
 
-  static encode(protoObj, protoName) {
+  static encodeProto(protoObj, protoName) {
     return BRC3Schema[protoName].encode(protoObj).finish();
   }
 
-  static decode(protoBytes, protoName) {
+  static decodeProto(protoBytes, protoName) {
     return BRC3Schema[protoName].toObject(BRC3Schema[protoName].decode(protoBytes));
   }
 
