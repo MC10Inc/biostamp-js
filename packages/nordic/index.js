@@ -98,7 +98,7 @@ class NordicSensor extends BRC3Sensor {
     });
   }
 
-  get name() {
+  get serial() {
     return null;
   }
 

@@ -127,13 +127,14 @@ class WebSensor extends BRC3Sensor {
     write(packets);
   }
 
-  get name() {
+  get serial() {
     return this.device.name;
   }
 }
 
 window.BiostampSensor = WebSensor;
 window.BiostampError = BRC3Error;
+window.BiostampUtils = BRC3Utils;
 
 module.exports =  {
   BiostampSensor: WebSensor,

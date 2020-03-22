@@ -132,16 +132,14 @@ class BRC3Db {
   }
 
   download(sensor, recInfo, onProgress) {
-    let serial = sensor.name;
-
-    return this._insertRec(serial, recInfo).then(() => {
-      return this._getRec(serial, recInfo.recordingId);
+    return this._insertRec(sensor.serial, recInfo).then(() => {
+      return this._getRec(sensor.serial, recInfo.recordingId);
     }).then((rec) => {
       return this._getStartPage(rec.id).then((startPage) => {
         return [rec, startPage];
       });
     }).then(([rec, startPage]) => {
-      let pageListener = (pageNum, recPage) => {
+      let handlePage = (pageNum, recPage) => {
         let params = {
           $fk_id: rec.id,
           $page_number: pageNum,
@@ -157,7 +155,7 @@ class BRC3Db {
         }
       };
 
-      return sensor.downloadRecording(recInfo, pageListener, startPage, false);
+      return sensor.downloadRecording(recInfo, handlePage, startPage, false);
     }).catch((e) => {
       throw(e);
     });
@@ -229,7 +227,7 @@ class BRC3Db {
   }
 
   readCsv(serial, recId, feature) {
-    // TODO
+    return Promise.resolve("TODO");
   }
 
   delete(serial, recId) {

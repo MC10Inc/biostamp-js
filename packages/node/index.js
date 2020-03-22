@@ -138,7 +138,7 @@ class NodeSensor extends BRC3Sensor {
     });
   }
 
-  get name() {
+  get serial() {
     return this.peripheral.advertisement.localName;
   }
 }

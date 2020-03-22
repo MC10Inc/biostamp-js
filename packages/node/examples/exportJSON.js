@@ -1,4 +1,4 @@
-let { BiostampSensor, BiostampRecording } = require("../index");
+let { BiostampSensor, BiostampDb } = require("../index");
 
 let fs = require("fs");
 let yargs = require("yargs");
@@ -9,27 +9,24 @@ let argv = yargs
   .demandOption(["serial", "recId"])
   .argv;
 
-BiostampSensor.connect(argv.serial, process.exit).then((sensor) => {
-  sensor.getRecordingInfo(null, parseInt(argv.recId)).then((recInfo) => {
-    let recording = new BiostampRecording(recInfo);
+let serial = argv.serial;
+let recId = parseInt(argv.recId);
 
-    return sensor.downloadRecording(recInfo, (pages) => {
-      pages.forEach((page) => {
-        recording.processPage(page);
-      });
-    }).then(() => {
-      return recording.toObject();
-    }).catch((err) => {
-      throw(err);
+BiostampSensor.connect(serial, process.exit).then((sensor) => {
+  let db = new BiostampDb();
+
+  sensor.getRecordingInfo(null, recId).then((recInfo) => {
+    return db.download(sensor, recInfo, (pct) => {
+      console.log("Downloaded " + (pct * 100).toFixed(2) + "%");
     });
-  }).then((obj) => {
-    let path = argv.serial + "-" + argv.recId + ".json";
+  }).then(() => {
+    return db.readJson(serial, recId);
+  }).then((txt) => {
+    let path = serial + "-" + recId + ".json";
 
-    fs.writeFileSync(path, JSON.stringify(obj, null, 2), "utf8");
-
-    console.log("Saved " + path);
-  }).catch((err) => {
-    console.error(err);
+    fs.writeFileSync(path, txt, "utf8");
+  }).catch((e) => {
+    console.warn(e);
   }).finally(() => {
     sensor.disconnect();
   });
