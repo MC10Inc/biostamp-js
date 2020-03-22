@@ -2,7 +2,7 @@ let { BRC3Sensor } = require("@mc10inc/biostamp-js-core");
 
 let sqlite3 = require("sqlite3");
 
-// let FK_ON = "PRAGMA foreign_keys=ON";
+let FK_ON = "PRAGMA foreign_keys=ON";
 
 let CREATE_TABLE_RECORDINGS = "CREATE TABLE IF NOT EXISTS recordings ("
   + "id INTEGER PRIMARY KEY AUTOINCREMENT, "
@@ -13,34 +13,35 @@ let CREATE_TABLE_RECORDINGS = "CREATE TABLE IF NOT EXISTS recordings ("
   + "UNIQUE(serial, recording_id))";
 
 let CREATE_TABLE_PAGES = "CREATE TABLE IF NOT EXISTS pages ("
-  + "recording_id INTEGER NOT NULL REFERENCES recordings(id) ON DELETE CASCADE, "
+  + "fk_id INTEGER NOT NULL REFERENCES recordings(id) ON DELETE CASCADE, "
   + "page_number INTEGER NOT NULL, "
   + "page_data BLOB NOT NULL, "
-  + "PRIMARY KEY(recording_id, page_number)) "
+  + "PRIMARY KEY(fk_id, page_number)) "
   + "WITHOUT ROWID";
 
-let INSERT_REC_INFO = "REPLACE INTO recordings ("
+let INSERT_REC_INFO = "INSERT OR IGNORE INTO recordings ("
   + "serial, recording_id, num_pages, rec_info) values ("
   + "$serial, $recording_id, $num_pages, $rec_info)";
 
-let INSERT_REC_PAGE = "REPLACE INTO pages ("
-  + "recording_id, page_number, page_data) values ("
-  + "$recording_id, $page_number, $page_data)";
+let INSERT_REC_PAGE = "INSERT OR IGNORE INTO pages ("
+  + "fk_id, page_number, page_data) values ("
+  + "$fk_id, $page_number, $page_data)";
 
 let SELECT_RECORDINGS = "SELECT * FROM recordings";
 
 let SELECT_RECORDING = "SELECT * FROM recordings "
-  + "WHERE recording_id = $recording_id";
+  + "WHERE serial = $serial "
+  + "AND recording_id = $recording_id";
 
 let SELECT_PAGES = "SELECT * FROM pages "
-  + "WHERE recording_id = $recording_id "
+  + "WHERE fk_id = $fk_id "
   + "ORDER BY page_number";
 
 let SELECT_MAX_PAGE_NUM = "SELECT MAX(page_number) as page_number FROM pages "
-  + "WHERE recording_id = $recording_id";
+  + "WHERE fk_id = $fk_id";
 
 let DELETE_RECORDING = "DELETE FROM recordings "
-  + "WHERE recording_id = $recording_id";
+  + "WHERE id = $id";
 
 let DELETE_ALL_RECORDINGS = "DELETE FROM recordings";
 
@@ -88,8 +89,8 @@ class BRC3Db {
         else {
           Promise.all([
             dbRun(CREATE_TABLE_RECORDINGS),
-            dbRun(CREATE_TABLE_PAGES)
-            // dbRun(FK_ON)
+            dbRun(CREATE_TABLE_PAGES),
+            dbRun(FK_ON)
           ]).then((statements) => {
             //
           }).catch((e) => {
@@ -100,7 +101,7 @@ class BRC3Db {
     }
   }
 
-  _initDownload(serial, recInfo) {
+  _insertRec(serial, recInfo) {
     let params = {
       $serial: serial,
       $recording_id: recInfo.recordingId,
@@ -108,20 +109,43 @@ class BRC3Db {
       $rec_info: BRC3Sensor.encode(recInfo, "RecordingInfo")
     };
 
-    return dbRun(INSERT_REC_INFO, params).then((statement) => {
-      // console.log(statement);
-      // let lastId = statement.lastId;
-      return dbGet(SELECT_MAX_PAGE_NUM, { $recording_id: recInfo.recordingId });
-    }).then((result) => {
+    return dbRun(INSERT_REC_INFO, params);
+  }
+
+  _getRec(serial, recId) {
+    let params = {
+      $serial: serial,
+      $recording_id: recId
+    };
+
+    return dbGet(SELECT_RECORDING, params).then((rec) => {
+      if (!rec) {
+        throw(Error("Recording not found"));
+      }
+
+      return rec;
+    });
+  }
+
+  _getStartPage(fkId) {
+    return dbGet(SELECT_MAX_PAGE_NUM, { $fk_id: fkId }).then((result) => {
       return result.page_number || 0;
     });
   }
 
   download(sensor, recInfo, onProgress) {
-    return this._initDownload(sensor.name, recInfo).then((startPage) => {
+    let serial = sensor.name;
+
+    return this._insertRec(serial, recInfo).then(() => {
+      return this._getRec(serial, recInfo.recordingId);
+    }).then((rec) => {
+      return this._getStartPage(rec.id).then((startPage) => {
+        return [rec, startPage];
+      });
+    }).then(([rec, startPage]) => {
       let pageListener = (pageNum, recPage) => {
         let params = {
-          $recording_id: recInfo.recordingId,
+          $fk_id: rec.id,
           $page_number: pageNum,
           $page_data: BRC3Sensor.encode(recPage, "RecordingPage")
         };
@@ -131,7 +155,7 @@ class BRC3Db {
         });
 
         if (onProgress) {
-          onProgress((pageNum + 1) / recInfo.numPages);
+          onProgress((pageNum + 1) / rec.num_pages);
         }
       };
 
@@ -166,15 +190,12 @@ class BRC3Db {
     });
   }
 
-  read(recId, onRow) {
+  read(serial, recId, onRow) {
     return new Promise((resolve, reject) => {
-      return dbGet(SELECT_RECORDING, { $recording_id: recId }).then((rec) => {
-        if (!rec) {
-          reject(Error("Recording not found"));
-        }
+      return this._getRec(serial, recId).then((rec) => {
+        let fkId = rec.id;
+        let recInfo = BRC3Sensor.decode(rec.rec_info, "RecordingInfo");
 
-        return BRC3Sensor.decode(rec.rec_info, "RecordingInfo");
-      }).then((recInfo) => {
         let handleRow = (err, row) => {
           if (err) {
             reject(err);
@@ -183,13 +204,12 @@ class BRC3Db {
           let recPage = BRC3Sensor.decode(row.page_data, "RecordingPage");
 
           onRow({
-            recordingId: row.recording_id,
             pageNum: row.page_number,
-            pageData: BRC3Sensor.processPage(recPage, recInfo)
+            pageData: BRC3Sensor.processRecPage(recPage, recInfo)
           });
         };
 
-        return dbEach(SELECT_PAGES, { $recording_id: recId }, handleRow);
+        return dbEach(SELECT_PAGES, { $fk_id: fkId }, handleRow);
       }).then(() => {
         resolve();
       }).catch((e) => {
@@ -198,25 +218,28 @@ class BRC3Db {
     });
   }
 
-  readJson(recId) {
+  readJson(serial, recId) {
     let rows = [];
 
     let onRow = (row) => {
       rows.push(row.pageData);
     };
 
-    return this.read(recId, onRow).then(() => {
+    return this.read(serial, recId, onRow).then(() => {
       return JSON.stringify(rows, null, 2);
     });
   }
 
-  readCsv(recId, feature) {
+  readCsv(serial, recId, feature) {
     // TODO
   }
 
-  delete(recId) {
-    console.log("deleting ", recId);
-    return dbRun(DELETE_RECORDING, { $recording_id: recId }).catch((e) => {
+  delete(serial, recId) {
+    return this._getRec(serial, recId).then((rec) => {
+      return rec.id;
+    }).then((id) => {
+      return dbRun(DELETE_RECORDING, { $id: id });
+    }).catch((e) => {
       throw(e);
     });
   }

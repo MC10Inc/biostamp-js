@@ -427,7 +427,7 @@ class BRC3Sensor {
       let getPages = new Promise((resolve, reject) => {
         this.recordingPagesListener = (recPages) => {
           recPages.forEach((recPage) => {
-            pageListener(n++, processed ? BRC3Sensor.processPage(recPage, recInfo) : recPage);
+            pageListener(n++, processed ? BRC3Sensor.processRecPage(recPage, recInfo) : recPage);
           });
 
           resolve();
@@ -519,7 +519,7 @@ class BRC3Sensor {
     return BRC3Schema[protoName].toObject(BRC3Schema[protoName].decode(protoBytes));
   }
 
-  static processPage(recPage, recInfo) {
+  static processRecPage(recPage, recInfo) {
     let obj = BRC3Schema.RecordingPage.toObject(recPage);
     let scales = recInfo.rawDataInfo;
 
