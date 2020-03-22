@@ -475,7 +475,7 @@ sensor.clearAllRecordings().then(() => {
 
 ### downloadRecording(recInfo, onPage [, startPage])
 
-Download pages of raw recording data.
+Download pages of recording data.
 
   * **recInfo**: A recording info object obtained through `getRecordingInfo()` or `listRecordings()`.
   * **onPage(pageNum, pageData)**: A function to handle a recording page.
@@ -611,7 +611,7 @@ console.log(sensor.name); // BRC3ea22
 
 ## BiostampDb
 
-The `BiostampDb` class downloads raw recording data from a sensor, saves it to a local database and prepares the data for export.
+The `BiostampDb` class downloads recording data from a sensor, saves it to a local database and prepares the data for export.
 
 This class uses [SQLite][16] in the Node.js and Nordic platforms and [IndexedDB][17] in the web browser.
 
@@ -625,7 +625,7 @@ Construct a BiostampDb object.
 let db = new BiostampDb();
 ```
 
-## download(sensor, recInfo)
+## download(sensor, recInfo [, onProgress])
 
 xxx
 
@@ -641,7 +641,7 @@ xxx
 xxx
 ```
 
-## exportCsv(id)
+## readCsv(recordingId, feature)
 
 xxx
 
@@ -649,7 +649,7 @@ xxx
 xxx
 ```
 
-## exportJson(id)
+## readJson(recordingId)
 
 xxx
 
@@ -657,7 +657,7 @@ xxx
 xxx
 ```
 
-## read(id, onRow)
+## read(recordingId, onRow)
 
 xxx
 
@@ -665,7 +665,15 @@ xxx
 xxx
 ```
 
-## delete(id)
+## delete(recordingId)
+
+xxx
+
+``` javascript
+xxx
+```
+
+## deleteAll
 
 xxx
 

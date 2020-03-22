@@ -62,7 +62,7 @@ class BRC3Sensor {
   }
 
   startSensing(config, maxDuration = 0, strMetadata = "") {
-    let metadata = BRC3Utils.encodeMessage(strMetadata);
+    let metadata = BRC3Utils.encodeText(strMetadata);
 
     let request = Request.fromObject({
       command: Command.SENSING_START,
@@ -168,7 +168,7 @@ class BRC3Sensor {
 
     return this.request(request).then((response) => {
       let info = response.recordingGetInfo.info;
-      info.metadata = BRC3Utils.decodeMessage(info.metadata);
+      info.metadata = BRC3Utils.decodeText(info.metadata);
 
       return info;
     });
@@ -300,7 +300,7 @@ class BRC3Sensor {
   }
 
   annotate(message, overrideTimestamp) {
-    let annotationData = BRC3Utils.encodeMessage(message);
+    let annotationData = BRC3Utils.encodeText(message);
 
     let request = Request.fromObject({
       command: Command.ANNOTATE,
@@ -427,7 +427,7 @@ class BRC3Sensor {
       let getPages = new Promise((resolve, reject) => {
         this.recordingPagesListener = (recPages) => {
           recPages.forEach((recPage) => {
-            pageListener(n++, processed ? this.processPage(recPage, recInfo) : recPage);
+            pageListener(n++, processed ? BRC3Sensor.processPage(recPage, recInfo) : recPage);
           });
 
           resolve();
@@ -511,15 +511,15 @@ class BRC3Sensor {
     });
   }
 
-  encode(protoObj, protoName) {
+  static encode(protoObj, protoName) {
     return BRC3Schema[protoName].encode(protoObj).finish();
   }
 
-  decode(protoBytes, protoName) {
-    return BRC3Schema[protoName].decode(protoBytes);
+  static decode(protoBytes, protoName) {
+    return BRC3Schema[protoName].toObject(BRC3Schema[protoName].decode(protoBytes));
   }
 
-  processPage(recPage, recInfo) {
+  static processPage(recPage, recInfo) {
     let obj = BRC3Schema.RecordingPage.toObject(recPage);
     let scales = recInfo.rawDataInfo;
 
@@ -545,11 +545,11 @@ class BRC3Sensor {
       processSeries(obj.motion.gyroZ, scales.gyroDpsScale);
     }
     else if (obj.afe4900) {
-      processSeries(obj.afe4900.ecg, scales.afe4900EcgVScale);
-      processSeries(obj.afe4900.ppg, 1);
+      processSeries(obj.afe4900.ecg || [], scales.afe4900EcgVScale);
+      processSeries(obj.afe4900.ppg || [], 1);
     }
     else if (obj.annotation) {
-      obj.annotation = BRC3Utils.decodeMessage(obj.annotation.annotationData);
+      obj.annotation = BRC3Utils.decodeText(obj.annotation.annotationData);
     }
 
     return obj;

@@ -27,7 +27,7 @@ let toBytes = (arr) => {
   return Buffer.from(arr);
 };
 
-let encodeMessage = (str) => {
+let encodeText = (str) => {
   if (BROWSER) {
     return new TextEncoder().encode(str);
   }
@@ -35,7 +35,7 @@ let encodeMessage = (str) => {
   return Buffer.from(str);
 };
 
-let decodeMessage = (buffer) => {
+let decodeText = (buffer) => {
   if (BROWSER) {
     return new TextDecoder().decode(buffer);
   }
@@ -46,6 +46,6 @@ let decodeMessage = (buffer) => {
 module.exports = {
   crc16,
   toBytes,
-  encodeMessage,
-  decodeMessage
+  encodeText,
+  decodeText
 };
