@@ -478,7 +478,7 @@ sensor.clearAllRecordings().then(() => {
 
 ### downloadRecording(recInfo, onPage [, startPage])
 
-Download pages of recording data.
+Download pages of recording data. _Use this method only if you intend to process the downloaded data yourself. Otherwise, use the download() method of the BiostampDb class, described below._
 
   * **recInfo**: A recording info object obtained via `getRecordingInfo()` or `listRecordings()`.
   * **onPage(pageNum, pageData)**: A function to handle a recording page.
