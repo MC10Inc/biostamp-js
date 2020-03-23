@@ -14,22 +14,21 @@ let serial = argv.serial;
 let recId = parseInt(argv.recId);
 let feature = argv.feature;
 
-BiostampSensor.connect(serial, process.exit).then((sensor) => {
+// BiostampSensor.connect(serial, process.exit).then((sensor) => {
   let db = new BiostampDb();
 
-  sensor.getRecordingInfo(null, recId).then((recInfo) => {
-    return db.download(sensor, recInfo, (progress) => {
-      console.log(progress);
-    });
-  }).then(() => {
-    return db.readCsv(serial, recId, feature);
-  }).then((txt) => {
+  // sensor.getRecordingInfo(null, recId).then((recInfo) => {
+  //   return db.download(sensor, recInfo, (progress) => {
+  //     console.log(progress);
+  //   });
+  // }).then(() => {
+  return db.readCsv(serial, recId, feature).then((txt) => {
     let path = serial + "-" + recId + "-" + feature + ".csv";
 
     fs.writeFileSync(path, txt, "utf8");
   }).catch((e) => {
     console.warn(e);
-  }).finally(() => {
-    sensor.disconnect();
+  // }).finally(() => {
+  //   sensor.disconnect();
   });
-});
+// });

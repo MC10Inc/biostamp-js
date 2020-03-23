@@ -250,7 +250,40 @@ class BRC3Db {
   }
 
   readCsv(serial, recId, feature) {
-    return Promise.resolve("TODO");
+    let pages = [];
+    let cols = [];
+    let txt = "";
+
+    let onRow = (row) => {
+      if (row.pageData[feature]) {
+        pages.push(row.pageData);
+      }
+    };
+
+    return this.read(serial, recId, onRow).then(() => {
+      let cols = [];
+
+      if (pages.length) {
+        cols = feature === "annotation" ? [feature] : Object.keys(pages[0][feature]);
+        txt = ["timestamp"].concat(cols).join(",") + "\n";
+      }
+
+      pages.forEach((page) => {
+        let timestamp = page.timestamp;
+        let samplingPeriod = page.samplingPeriod || 0;
+        let data = page[feature];
+
+        if (feature === "annotation") {
+          txt += timestamp + ",\"" + data.replace(/"/g, "\"\"") + "\"\n";
+        }
+        else for (let i = 0, n = data[cols[0]].length; i < n; i++) {
+          txt += (timestamp + (samplingPeriod * i)) + ",";
+          txt += (cols.map((c) => data[c][i]).join(",") + "\n");
+        }
+      });
+
+      return txt;
+    });
   }
 
   delete(serial, recId) {
