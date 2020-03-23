@@ -480,7 +480,7 @@ sensor.clearAllRecordings().then(() => {
 
 Download pages of recording data.
 
-  * **recInfo**: A recording info object obtained through `getRecordingInfo()` or `listRecordings()`.
+  * **recInfo**: A recording info object obtained via `getRecordingInfo()` or `listRecordings()`.
   * **onPage(pageNum, pageData)**: A function to handle a recording page.
   * **startPage**: The first page to download (default is 0).
 
@@ -614,9 +614,9 @@ console.log(sensor.serial); // BRC3ea22
 
 ## BiostampDb
 
-The `BiostampDb` class downloads recording data from a sensor, saves it to a local database and prepares the data for export.
+The `BiostampDb` class downloads recording data from a sensor, saves it to a local database and exports the data in a usable form.
 
-This class uses [SQLite][16] in the Node.js and Nordic platforms and [IndexedDB][17] in the web browser.
+This class depends on [SQLite][16] in Node.js and [IndexedDB][17] in the web browser.
 
 ### BiostampDb(path)
 
@@ -628,65 +628,115 @@ Construct a BiostampDb object.
 let db = new BiostampDb();
 ```
 
-## download(sensor, recInfo [, onProgress])
+### download(sensor, recInfo [, onProgress])
 
-xxx
+Download a recording from a connected sensor and save it to the local database. This method resolves when all recording pages have been downloaded, at which point you can read out the entire recording from the database. _If the download is interruped for any reason, call this method again to resume where the download left off._
+
+  * **sensor**: The connected sensor.
+  * **recInfo**: A recording info object obtained via `sensor.getRecordingInfo()` or `sensor.listRecordings()`.
+  * **onProgress(percent)**: A function to receive progress notifications.
+
+The following example shows how to download the oldest recording on the sensor, read it out as JSON, then save it to disk in Node.js:
 
 ``` javascript
-xxx
+let db = new BiostampDb();
+
+sensor.getRecordingInfo(0).then((recInfo) => {
+  return db.download(sensor, recInfo);
+}).then(() => {
+  return db.readJson(serial, recInfo.recordingId);
+}).then((txt) => {
+  fs.writeFileSync("recording.json", txt, "utf8");
+}).catch((e) => {
+  console.warn(e);
+});
 ```
 
-## list()
+### list()
 
-xxx
+List all recordings saved in the local database.
 
 ``` javascript
-xxx
+db.list().then((recs) => {
+  recs.forEach((rec) => {
+    console.log(rec.serial); // "BRC3ea22"
+    console.log(rec.recordingId); // 1584919921
+    console.log(rec.numPages); // 51195
+    console.log(rec.recInfo); // { ... }
+  });
+});
 ```
 
-## readCsv(serial, recordingId, feature)
+### read(serial, recordingId, onRow)
 
-xxx
+Read rows of recording data from the database. This method resolves when all rows have been read. _Use this method only if you intend to transform the data yourself. Otherwise use readCsv() and readJson(), below._
+
+  * **serial**: The sensor serial number, e.g. "BRC3ea22". This value is case-sensitive.
+  * **recordingId**: The numeric recording ID, e.g. 1584919921.
+  * **onRow(row)**: A function to run after each row is read.
 
 ``` javascript
-xxx
+db.read(serial, recordingId, (row) => {
+  console.log(row.pageNum); // 3323
+  console.log(row.pageData); // { ... }
+}).then(() => {
+  ...
+});
 ```
 
-## readJson(serial, recordingId)
+### readCsv(serial, recordingId, feature)
 
-xxx
+Read recording data as CSV. This method resolves with plain text that can be written to a file.
+
+  * **serial**: The sensor serial number, e.g. "BRC3ea22". This value is case-sensitive.
+  * **recordingId**: The numeric recording ID, e.g. 1584919921.
+  * **feature**: The feature to export, one of "motion", "afe4900", "ad5940", "environment" or "annotation".
 
 ``` javascript
-xxx
+db.readCsv(serial, recordingId, feature).then((txt) => {
+  ...
+});
 ```
 
-## read(serial, recordingId, onRow)
+### readJson(serial, recordingId)
 
-xxx
+Read recording data as JSON. This method resolves with plain text that can be written to a file.
+
+  * **serial**: The sensor serial number, e.g. "BRC3ea22". This value is case-sensitive.
+  * **recordingId**: The numeric recording ID, e.g. 1584919921.
 
 ``` javascript
-xxx
+db.readJson(serial, recordingId).then((txt) => {
+  ...
+});
 ```
 
-## delete(serial, recordingId)
+### delete(serial, recordingId)
 
-xxx
+Delete a recording from the local database.
+
+  * **serial**: The sensor serial number, e.g. "BRC3ea22". This value is case-sensitive.
+  * **recordingId**: The numeric recording ID, e.g. 1584919921.
 
 ``` javascript
-xxx
+db.delete(serial, recordingId).then(() => {
+  ...
+});
 ```
 
-## deleteAll
+### deleteAll()
 
-xxx
+Delete all recordings from the local database.
 
 ``` javascript
-xxx
+db.deleteAll(serial, recordingId).then(() => {
+  ...
+});
 ```
 
 ## BiostampUtils
 
-## encodeText(text)
+### encodeText(text)
 
 Encode a text string as a byte array. This method returns a [Buffer][18] in Node.js and a [Uint8Array][19] in the web browser.
 
@@ -696,7 +746,7 @@ Encode a text string as a byte array. This method returns a [Buffer][18] in Node
 let metadata = BiostampUtils.encodeText("Testing 1-2-3"); // <Buffer 54 65 73 ...>
 ```
 
-## decodeText(bytes)
+### decodeText(bytes)
 
 Convert encoded text into a UTF-8 string.
 
