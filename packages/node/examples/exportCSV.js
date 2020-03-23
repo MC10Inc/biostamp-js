@@ -18,8 +18,8 @@ BiostampSensor.connect(serial, process.exit).then((sensor) => {
   let db = new BiostampDb();
 
   sensor.getRecordingInfo(null, recId).then((recInfo) => {
-    return db.download(sensor, recInfo, (pct) => {
-      console.log("Downloaded " + (pct * 100).toFixed(2) + "%");
+    return db.download(sensor, recInfo, (progress) => {
+      console.log(progress);
     });
   }).then(() => {
     return db.readCsv(serial, recId, feature);

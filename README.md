@@ -616,7 +616,7 @@ console.log(sensor.serial); // BRC3ea22
 
 The `BiostampDb` class downloads recording data from a sensor, saves it to a local database and exports the data in a usable form.
 
-This class depends on [SQLite][16] in Node.js and [IndexedDB][17] in the web browser. (Note IndexedDB observes a [same-origin][20] policy.)
+This class depends on [SQLite][16] in Node.js and [IndexedDB][17] in the web browser. _IndexedDB observes a [same-origin][20] policy, meaning two different origins will use two different databases._
 
 ### BiostampDb([path])
 

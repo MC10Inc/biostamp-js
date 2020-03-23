@@ -131,6 +131,7 @@ class BRC3Db {
     });
   }
 
+
   download(sensor, recInfo, onProgress) {
     return this._insertRec(sensor.serial, recInfo).then(() => {
       return this._getRec(sensor.serial, recInfo.recordingId);
@@ -139,6 +140,15 @@ class BRC3Db {
         return [rec, startPage];
       });
     }).then(([rec, startPage]) => {
+      let p1 = startPage / rec.num_pages;
+      let t1 = Date.now();
+      let pDelta = [];
+      let tDelta = [];
+
+      let rollAvg = (arr) => {
+        return arr.slice(-10).reduce((a, b) => a + (+b), 0) / Math.min(10, arr.length);
+      };
+
       let handlePage = (pageNum, recPage) => {
         let params = {
           $fk_id: rec.id,
@@ -150,10 +160,21 @@ class BRC3Db {
           console.error(e);
         });
 
-        // TODO throttle
         if (onProgress) {
-          // TODO computed estimated time?
-          onProgress((pageNum + 1) / rec.num_pages);
+          let p2 = (pageNum + 1) / rec.num_pages;
+          let t2 = Date.now();
+
+          if (p2 === 1 || p2 - p1 >= 0.002) {
+            pDelta.push(p2 - p1);
+            tDelta.push(t2 - t1);
+
+            p1 = p2;
+            t1 = t2;
+
+            let est = Math.round((((1 - p2) / rollAvg(pDelta)) * rollAvg(tDelta)) / 1000);
+
+            onProgress({ pctComplete: p1, estTimeLeft: est });
+          }
         }
       };
 
