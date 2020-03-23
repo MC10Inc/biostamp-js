@@ -616,13 +616,13 @@ console.log(sensor.serial); // BRC3ea22
 
 The `BiostampDb` class downloads recording data from a sensor, saves it to a local database and exports the data in a usable form.
 
-This class depends on [SQLite][16] in Node.js and [IndexedDB][17] in the web browser.
+This class depends on [SQLite][16] in Node.js and [IndexedDB][17] in the web browser. (Note IndexedDB observes a [same-origin][20] policy.)
 
 ### BiostampDb(path)
 
 Construct a BiostampDb object.
 
-  * **path**: Path to the database file. Default is "./biostamp.db".
+  * **path**: Path to the database file. If no path is given, a file named "biostamp.db" will be created automatically in the working directory.
 
 ``` javascript
 let db = new BiostampDb();
@@ -847,3 +847,4 @@ BiostampError.RECORDING_NOT_IN_PROGRESS
 [17]: https://developer.mozilla.org/en-US/docs/Web/API/IndexedDB_API
 [18]: https://nodejs.org/api/buffer.html
 [19]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Uint8Array
+[20]: https://www.w3.org/Security/wiki/Same_Origin_Policy
