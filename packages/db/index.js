@@ -162,7 +162,7 @@ class BRC3Db {
         if (onProgress) {
           let n2 = pageNum;
 
-          if (n2 === rec.num_pages - 1 || n2 - n1 >= 100) {
+          if ((n2 + 1) === rec.num_pages || n2 - n1 >= 100) {
             let t2 = Date.now();
 
             nDelta.push(n2 - n1);
@@ -172,7 +172,10 @@ class BRC3Db {
             n1 = n2;
 
             let pctComplete = ((n2 + 1) / rec.num_pages);
-            let estTimeLeft = Math.round((((rec.num_pages - n2) / rollAvg(nDelta)) * rollAvg(tDelta)) / 1000);
+            let pagesLeft = rec.num_pages - (n2 + 1);
+            let pagesPerInterval = rollAvg(nDelta) || 1;
+            let interval = rollAvg(tDelta);
+            let estTimeLeft = Math.round(((pagesLeft / pagesPerInterval) * interval) / 1000);
 
             onProgress({ pctComplete, estTimeLeft });
           }
