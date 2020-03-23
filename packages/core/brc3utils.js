@@ -43,9 +43,28 @@ let decodeText = (buffer) => {
   return buffer.toString("utf-8");
 };
 
+let writeFile = (name, text, type = "text/plain") => {
+  if (BROWSER) {
+    let anchor = document.createElement("a");
+    let blob = new Blob([text], { type });
+    let url = URL.createObjectURL(blob);
+
+    document.body.appendChild(anchor);
+
+    anchor.href = url;
+    anchor.download = name;
+    anchor.click();
+
+    document.body.removeChild(anchor);
+
+    URL.revokeObjectURL(url);
+  }
+};
+
 module.exports = {
   crc16,
   toBytes,
   encodeText,
-  decodeText
+  decodeText,
+  writeFile
 };

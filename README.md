@@ -652,6 +652,12 @@ sensor.getRecordingInfo(0).then((recInfo) => {
 });
 ```
 
+In the web browser, use `BiostampUtils.writeFile()` to save the file to the user's downloads directory:
+
+``` javascript
+BiostampUtils.writeFile("recording.json", txt, "text/json");
+```
+
 ### list()
 
 List all recordings saved in the local database.
@@ -669,7 +675,7 @@ db.list().then((recs) => {
 
 ### read(serial, recordingId, onRow)
 
-Read rows of recording data from the database. This method resolves when all rows have been read. _Use this method only if you intend to transform the data yourself. Otherwise use readCsv() and readJson(), below._
+Read rows of recording data from the database. This method resolves when all rows have been read. _Use this method only if you intend to transform the data yourself. Otherwise use readCsv() or readJson(), below._
 
   * **serial**: The sensor serial number, e.g. "BRC3ea22". This value is case-sensitive.
   * **recordingId**: The numeric recording ID, e.g. 1584919921.
@@ -755,6 +761,22 @@ Convert encoded text into a UTF-8 string.
 ``` javascript
 sensor.getRecordingInfo(0).then((recInfo) => {
   console.log(BiostampUtils.decodeText(recInfo.metadata)); // "Testing 1-2-3"
+});
+```
+
+### writeFile(fileName, text [, mimeType])
+
+**(Web only)**
+
+Save a file to the user's downloads directory. This method has no return value.
+
+  * **fileName**: File name, e.g. "BRC3ea22-1584919921.json".
+  * **text**: File contents as plain text.
+  * **mimeType**: Optional mime type, e.g. "text/json". Default is "text/plain"/
+
+``` javascript
+db.readJson(serial, recInfo.recordingId).then((txt) => {
+  BiostampUtils.writeFile("recording.json", txt, "text/json");
 });
 ```
 

@@ -150,7 +150,9 @@ class BRC3Db {
           console.error(e);
         });
 
+        // TODO throttle
         if (onProgress) {
+          // TODO computed estimated time?
           onProgress((pageNum + 1) / rec.num_pages);
         }
       };
