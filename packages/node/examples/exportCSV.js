@@ -22,9 +22,9 @@ BiostampSensor.connect(serial, process.exit).then((sensor) => {
       console.log(progress);
     });
   }).then(() => {
-    return db.readJson(serial, recId, feature);
+    return db.readCsv(serial, recId, feature);
   }).then((txt) => {
-    let path = serial + "-" + recId + "-" + feature + ".json";
+    let path = serial + "-" + recId + "-" + feature + ".csv";
 
     fs.writeFileSync(path, txt, "utf8");
   }).catch((e) => {
