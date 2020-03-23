@@ -140,6 +140,7 @@ class BRC3Db {
         return [rec, startPage];
       });
     }).then(([rec, startPage]) => {
+      let n1 = startPage;
       let p1 = startPage / rec.num_pages;
       let t1 = Date.now();
       let pDelta = [];
@@ -161,15 +162,18 @@ class BRC3Db {
         });
 
         if (onProgress) {
-          let p2 = (pageNum + 1) / rec.num_pages;
-          let t2 = Date.now();
+          let n2 = pageNum;
 
-          if (p2 === 1 || p2 - p1 >= 0.002) {
+          if (n2 === rec.num_pages - 1 || n2 - n1 >= 100) {
+            let p2 = (pageNum + 1) / rec.num_pages;
+            let t2 = Date.now();
+
             pDelta.push(p2 - p1);
             tDelta.push(t2 - t1);
 
             p1 = p2;
             t1 = t2;
+            n1 = n2;
 
             let est = Math.round((((1 - p2) / rollAvg(pDelta)) * rollAvg(tDelta)) / 1000);
 
