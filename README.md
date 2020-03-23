@@ -618,11 +618,11 @@ The `BiostampDb` class downloads recording data from a sensor, saves it to a loc
 
 This class depends on [SQLite][16] in Node.js and [IndexedDB][17] in the web browser. (Note IndexedDB observes a [same-origin][20] policy.)
 
-### BiostampDb(path)
+### BiostampDb([path])
 
 Construct a BiostampDb object.
 
-  * **path**: Path to the database file. If no path is given, a file named "biostamp.db" will be created automatically in the working directory.
+  * **path**: Path to the database file (Node.js only). If no path is given, a file named "biostamp.db" will be created automatically in the working directory.
 
 ``` javascript
 let db = new BiostampDb();
@@ -634,7 +634,7 @@ Download a recording from a connected sensor and save it to the local database. 
 
   * **sensor**: The connected sensor.
   * **recInfo**: A recording info object obtained via `sensor.getRecordingInfo()` or `sensor.listRecordings()`.
-  * **onProgress(percent)**: A function to receive progress notifications.
+  * **onProgress(progress)**: A function to receive periodic notifications in the form `{ pctComplete, estTimeLeft }`, where `estTimeLeft` is the estimated number of seconds remaining.
 
 The following example shows how to download the oldest recording on the sensor, read it out as JSON, then save it to disk in Node.js:
 
