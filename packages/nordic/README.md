@@ -15,7 +15,7 @@ let {
   BiostampSensor,
   BiostampDb,
   BiostampError,
-  BioistampUtils
+  BiostampUtils
 } = require("@mc10inc/biostamp-js-nordic");
 
 BiostampSensor.connect("/dev/tty.usbmodem14112", "f2:fb:48:02:13:a8", onDisconnect).then((sensor) => {

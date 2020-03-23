@@ -11,7 +11,7 @@ let {
   BiostampSensor,
   BiostampDb,
   BiostampError,
-  BioistampUtils
+  BiostampUtils
 } = require("@mc10inc/biostamp-js-web");
 
 BiostampSensor.connect("BRC3", onDisconnect).then((sensor) => {
