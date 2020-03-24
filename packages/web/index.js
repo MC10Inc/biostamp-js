@@ -1,4 +1,5 @@
 let { BRC3Sensor, BRC3Error, BRC3Utils } = require("@mc10inc/biostamp-js-core");
+let { BRC3WebDb } = require("./db.js");
 
 const BRC3_SERVICE_UUID = "de771000-90e1-11e8-9a5a-34f39a69480c";
 const BRC3_COMMAND_UUID = "de771001-90e1-11e8-9a5a-34f39a69480c";
@@ -133,11 +134,13 @@ class WebSensor extends BRC3Sensor {
 }
 
 window.BiostampSensor = WebSensor;
+window.BiostampDb = BRC3WebDb;
 window.BiostampError = BRC3Error;
 window.BiostampUtils = BRC3Utils;
 
 module.exports =  {
   BiostampSensor: WebSensor,
+  BiostampDb: BRC3WebDb,
   BiostampError: BRC3Error,
   BiostampUtils: BRC3Utils
 };
