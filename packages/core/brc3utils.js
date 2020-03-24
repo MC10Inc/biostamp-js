@@ -109,6 +109,41 @@ let writeFile = (name, text, type = "text/plain") => {
   }
 };
 
+let ProgressSampler = function (startPage, totalPages, onProgress) {
+  let n1 = startPage;
+  let t1 = Date.now();
+  let nDelta = [];
+  let tDelta = [];
+
+  let rollAvg = (arr) => {
+    return arr.slice(-10).reduce((a, b) => a + (+b), 0) / Math.min(10, arr.length);
+  };
+
+  this.sample = (n2) => {
+    if (!onProgress) {
+      return;
+    }
+
+    if ((n2 + 1) === totalPages || n2 - n1 >= 100) {
+      let t2 = Date.now();
+
+      nDelta.push(n2 - n1);
+      tDelta.push(t2 - t1);
+
+      t1 = t2;
+      n1 = n2;
+
+      let pctComplete = ((n2 + 1) / totalPages);
+      let pagesLeft = totalPages - (n2 + 1);
+      let pagesPerInterval = rollAvg(nDelta) || 1;
+      let interval = rollAvg(tDelta);
+      let estTimeLeft = Math.round(((pagesLeft / pagesPerInterval) * interval) / 1000);
+
+      onProgress({ pctComplete, estTimeLeft });
+    }
+  };
+}
+
 module.exports = {
   crc16,
   toBytes,
@@ -116,5 +151,6 @@ module.exports = {
   decodeText,
   buildJson,
   buildCsv,
-  writeFile
+  writeFile,
+  ProgressSampler
 };

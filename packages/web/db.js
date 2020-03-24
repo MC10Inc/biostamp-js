@@ -20,12 +20,12 @@ class BRC3WebDb {
     };
 
     request.onsuccess = (evt) => {
-      console.log("Accessed DB");
+      console.log("Opened DB");
 
       db = request.result;
 
       db.onerror = (evt) => {
-        console.log("Cannot access DB");
+        console.log("Cannot open DB");
       };
     }
 
@@ -156,40 +156,12 @@ class BRC3WebDb {
     return this._insertRec(sensor.serial, recInfo).then(() => {
       return this._getStartPage(sensor.serial, recInfo.recordingId);
     }).then((startPage) => {
-      // TODO extract progress class into BRC3Utils
-      let n1 = startPage;
-      let t1 = Date.now();
-      let nDelta = [];
-      let tDelta = [];
+      let sampler = new BRC3Utils.ProgressSampler(startPage, recInfo.numPages, onProgress);
 
-      let rollAvg = (arr) => {
-        return arr.slice(-10).reduce((a, b) => a + (+b), 0) / Math.min(10, arr.length);
-      };
+      let handlePage = (pageNum, recPage) => {
+        this._insertPage(sensor.serial, recInfo.recordingId, pageNum, recPage);
 
-      let handlePage = (pageNumber, recPage) => {
-        this._insertPage(sensor.serial, recInfo.recordingId, pageNumber, recPage);
-
-        if (onProgress) {
-          let n2 = pageNumber;
-
-          if ((n2 + 1) === recInfo.numPages || n2 - n1 >= 100) {
-            let t2 = Date.now();
-
-            nDelta.push(n2 - n1);
-            tDelta.push(t2 - t1);
-
-            t1 = t2;
-            n1 = n2;
-
-            let pctComplete = ((n2 + 1) / recInfo.numPages);
-            let pagesLeft = recInfo.numPages - (n2 + 1);
-            let pagesPerInterval = rollAvg(nDelta) || 1;
-            let interval = rollAvg(tDelta);
-            let estTimeLeft = Math.round(((pagesLeft / pagesPerInterval) * interval) / 1000);
-
-            onProgress({ pctComplete, estTimeLeft });
-          }
-        }
+        sampler.sample(pageNum);
       };
 
       // TODO this resolves before the last batch of pages is inserted

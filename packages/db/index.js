@@ -139,14 +139,7 @@ class BRC3Db {
         return [rec, startPage];
       });
     }).then(([rec, startPage]) => {
-      let n1 = startPage;
-      let t1 = Date.now();
-      let nDelta = [];
-      let tDelta = [];
-
-      let rollAvg = (arr) => {
-        return arr.slice(-10).reduce((a, b) => a + (+b), 0) / Math.min(10, arr.length);
-      };
+      let sampler = new BRC3Utils.ProgressSampler(startPage, recInfo.numPages, onProgress);
 
       let handlePage = (pageNum, recPage) => {
         let params = {
@@ -159,27 +152,7 @@ class BRC3Db {
           console.error(e);
         });
 
-        if (onProgress) {
-          let n2 = pageNum;
-
-          if ((n2 + 1) === rec.num_pages || n2 - n1 >= 100) {
-            let t2 = Date.now();
-
-            nDelta.push(n2 - n1);
-            tDelta.push(t2 - t1);
-
-            t1 = t2;
-            n1 = n2;
-
-            let pctComplete = ((n2 + 1) / rec.num_pages);
-            let pagesLeft = rec.num_pages - (n2 + 1);
-            let pagesPerInterval = rollAvg(nDelta) || 1;
-            let interval = rollAvg(tDelta);
-            let estTimeLeft = Math.round(((pagesLeft / pagesPerInterval) * interval) / 1000);
-
-            onProgress({ pctComplete, estTimeLeft });
-          }
-        }
+        sampler.sample(pageNum);
       };
 
       return sensor.downloadRecording(recInfo, handlePage, startPage, false);
