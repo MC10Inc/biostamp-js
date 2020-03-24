@@ -1,4 +1,4 @@
-let { BRC3Sensor } = require("@mc10inc/biostamp-js-core");
+let { BRC3Sensor, BRC3Utils } = require("@mc10inc/biostamp-js-core");
 
 let sqlite3 = require("sqlite3");
 
@@ -242,52 +242,11 @@ class BRC3Db {
   }
 
   readJson(serial, recId) {
-    let rows = [];
-
-    let onRow = (row) => {
-      rows.push(row.pageData);
-    };
-
-    return this.read(serial, recId, onRow).then(() => {
-      return JSON.stringify(rows, null, 2);
-    });
+    return BRC3Utils.buildJson(this, serial, recId);
   }
 
   readCsv(serial, recId, feature) {
-    let pages = [];
-    let cols = [];
-    let txt = "";
-
-    let onRow = (row) => {
-      if (row.pageData[feature]) {
-        pages.push(row.pageData);
-      }
-    };
-
-    return this.read(serial, recId, onRow).then(() => {
-      let cols = [];
-
-      if (pages.length) {
-        cols = feature === "annotation" ? [feature] : Object.keys(pages[0][feature]);
-        txt = ["timestamp"].concat(cols).join(",") + "\n";
-      }
-
-      pages.forEach((page) => {
-        let timestamp = page.timestamp;
-        let samplingPeriod = page.samplingPeriod || 0;
-        let data = page[feature];
-
-        if (feature === "annotation") {
-          txt += timestamp + ",\"" + data.replace(/"/g, "\"\"") + "\"\n";
-        }
-        else for (let i = 0, n = data[cols[0]].length; i < n; i++) {
-          txt += (timestamp + (samplingPeriod * i)) + ",";
-          txt += (cols.map((c) => data[c][i]).join(",") + "\n");
-        }
-      });
-
-      return txt;
-    });
+    return BRC3Utils.buildCsv(this, serial, recId, feature);
   }
 
   delete(serial, recId) {
