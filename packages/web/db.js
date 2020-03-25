@@ -5,7 +5,7 @@ let dbName = "biostamp";
 let dbVersion = 1;
 
 class BRC3WebDb {
-  constructor() {
+  constructor(onReady) {
     let request = indexedDB.open(dbName, dbVersion);
 
     request.onupgradeneeded = (evt) => { 
@@ -27,6 +27,10 @@ class BRC3WebDb {
       db.onerror = (evt) => {
         console.log("(DB) Cannot open database");
       };
+
+      if (onReady) {
+        onReady();
+      }
     }
 
     request.onerror = (evt) => {
@@ -78,7 +82,6 @@ class BRC3WebDb {
         serial,
         recordingId,
         pageNumber,
-        // pageData: BRC3Sensor.encodeProto(recPage, "RecordingPage")
         pagesEncoded: recPages.map((recPage) => {
           return BRC3Sensor.encodeProto(recPage, "RecordingPage");
         })

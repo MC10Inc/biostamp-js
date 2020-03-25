@@ -83,7 +83,7 @@ let dbEach = function (sql, params = {}, onRow) {
 };
 
 class BRC3Db {
-  constructor(path = "./biostamp.db") {
+  constructor(onReady = null, path = "./biostamp.db") {
     if (!db) {
       db = new sqlite3.Database(path, (err) => {
         if (err) {
@@ -94,7 +94,11 @@ class BRC3Db {
             dbRun(CREATE_TABLE_RECORDINGS),
             dbRun(CREATE_TABLE_PAGES),
             dbRun(FK_ON)
-          ]).catch((e) => {
+          ]).then(() => {
+            if (onReady) {
+              onReady();
+            }
+          }).catch((e) => {
             console.error(e);
           });
         }

@@ -88,7 +88,7 @@ node examples/vitals.js -s [serialNumber]
 List all recordings downloaded into the local database.
 
 ```
-node examples/list.js
+node examples/dbList.js
 ```
 
 [1]: https://github.com/abandonware/noble

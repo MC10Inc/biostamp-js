@@ -599,14 +599,23 @@ The `BiostampDb` class downloads recording data from a sensor, saves it to a loc
 
 This class depends on [SQLite][16] in Node.js and [IndexedDB][17] in the web browser. _IndexedDB observes a [same-origin][20] policy—meaning two different origins will use two different databases—and may be subject to [storage limits][21]._
 
-### BiostampDb([path])
+### BiostampDb([onReady [, path]])
 
 Construct a BiostampDb object.
 
+  * **onReady(db)**: An optional callback to run when the database is ready.
   * **path**: Path to the database file (Node.js only). If no path is given, a file named "biostamp.db" will be created automatically in the working directory.
 
 ``` javascript
 let db = new BiostampDb();
+```
+
+If you intend to access the database immediately upon instantiation, use the `onReady` callback to determine when it is safe to proceed:
+
+```
+let db = new BiostampDb(() => {
+  db.list();
+});
 ```
 
 ### download(sensor, recInfo [, onProgress])
