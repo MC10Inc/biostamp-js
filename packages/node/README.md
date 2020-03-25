@@ -45,7 +45,7 @@ node examples/listRecordings.js -s [serialNumber]
 
 ### exportJSON.js
 
-Connect to a sensor and export a whole recording as JSON into the working directory.
+Connect to a sensor, download a recording, and export the entire recording as JSON into the working directory.
 
 ``` bash
 node examples/exportJSON.js -s [serialNumber] -r [recordingId]
@@ -53,7 +53,7 @@ node examples/exportJSON.js -s [serialNumber] -r [recordingId]
 
 ### exportCSV.js
 
-Connect to a sensor and export a data feature (e.g. "motion") as CSV into the working directory.
+Connect to a sensor, download a recording, and export a data feature (e.g. "motion") as CSV into the working directory.
 
 ``` bash
 node examples/exportCSV.js -s [serialNumber] -r [recordingId] -f [feature]
@@ -81,6 +81,14 @@ Connect to a sensor and list all vital signs, including firmware version and fre
 
 ``` bash
 node examples/vitals.js -s [serialNumber]
+```
+
+### dbList.js
+
+List all recordings downloaded into the local database.
+
+```
+node examples/list.js
 ```
 
 [1]: https://github.com/abandonware/noble

@@ -27,18 +27,21 @@ let INSERT_REC_PAGE = "INSERT OR IGNORE INTO pages ("
   + "fk_id, page_number, page_data) VALUES ("
   + "$fk_id, $page_number, $page_data)";
 
-let SELECT_RECORDINGS = "SELECT * FROM recordings";
+let SELECT_RECORDINGS = "SELECT r.*, MAX(p.page_number) AS last_page "
+  + "FROM recordings r "
+  + "LEFT JOIN pages p ON p.fk_id = r.id "
+  + "GROUP BY r.id";
 
-let SELECT_RECORDING = "SELECT * FROM recordings "
+let SELECT_RECORDING = "SELECT r.*, MAX(p.page_number) AS last_page "
+  + "FROM recordings r "
+  + "LEFT JOIN pages p ON p.fk_id = r.id "
   + "WHERE serial = $serial "
-  + "AND recording_id = $recording_id";
+  + "AND recording_id = $recording_id "
+  + "GROUP BY r.id";
 
 let SELECT_PAGES = "SELECT * FROM pages "
   + "WHERE fk_id = $fk_id "
   + "ORDER BY page_number";
-
-let SELECT_MAX_PAGE_NUM = "SELECT MAX(page_number) AS page_number FROM pages "
-  + "WHERE fk_id = $fk_id";
 
 let DELETE_RECORDING = "DELETE FROM recordings "
   + "WHERE id = $id";
@@ -125,26 +128,17 @@ class BRC3Db {
     });
   }
 
-  _getStartPage(fkId) {
-    return dbGet(SELECT_MAX_PAGE_NUM, { $fk_id: fkId }).then((result) => {
-      return result.page_number || 0;
-    });
-  }
-
   download(sensor, recInfo, onProgress) {
     return this._insertRec(sensor.serial, recInfo).then(() => {
       return this._getRec(sensor.serial, recInfo.recordingId);
     }).then((rec) => {
-      return this._getStartPage(rec.id).then((startPage) => {
-        return [rec.id, startPage];
-      });
-    }).then(([fkId, startPage]) => {
-      let sampler = new BRC3Utils.ProgressSampler(startPage, recInfo.numPages, onProgress);
+      let nextPage = rec.last_page ? rec.last_page + 1 : 0;
+      let sampler = new BRC3Utils.ProgressSampler(nextPage, recInfo.numPages, onProgress);
 
       let handlePages = (recPages) => {
         recPages.forEach((recPage) => {
           let params = {
-            $fk_id: fkId,
+            $fk_id: rec.id,
             $page_number: recPage.pageNumber,
             $page_data: BRC3Sensor.encodeProto(recPage, "RecordingPage")
           };
@@ -157,11 +151,11 @@ class BRC3Db {
         sampler.sample(recPages[0].pageNumber);
       };
 
-      if (startPage === recInfo.numPages) {
+      if (nextPage === recInfo.numPages) {
         return Promise.resolve();
       }
 
-      return sensor.downloadRecording(recInfo, handlePages, startPage, false);
+      return sensor.downloadRecording(recInfo, handlePages, nextPage, false);
     }).catch((e) => {
       throw(e);
     });
@@ -180,6 +174,7 @@ class BRC3Db {
           serial: row.serial,
           recordingId: row.recording_id,
           numPages: row.num_pages,
+          pagesDownloaded: row.last_page ? row.last_page + 1 : 0,
           recInfo: BRC3Sensor.decodeProto(row.rec_info, "RecordingInfo")
         });
       };

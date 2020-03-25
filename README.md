@@ -649,6 +649,7 @@ db.list().then((recs) => {
     console.log(rec.serial); // "BRC3ea22"
     console.log(rec.recordingId); // 1584919921
     console.log(rec.numPages); // 51195
+    console.log(rec.pagesDownloaded); // 51195
     console.log(rec.recInfo); // { ... }
   });
 });
