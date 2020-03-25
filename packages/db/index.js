@@ -136,26 +136,32 @@ class BRC3Db {
       return this._getRec(sensor.serial, recInfo.recordingId);
     }).then((rec) => {
       return this._getStartPage(rec.id).then((startPage) => {
-        return [rec, startPage];
+        return [rec.id, startPage];
       });
-    }).then(([rec, startPage]) => {
+    }).then(([fkId, startPage]) => {
       let sampler = new BRC3Utils.ProgressSampler(startPage, recInfo.numPages, onProgress);
 
-      let handlePage = (pageNum, recPage) => {
-        let params = {
-          $fk_id: rec.id,
-          $page_number: pageNum,
-          $page_data: BRC3Sensor.encodeProto(recPage, "RecordingPage")
-        };
+      let handlePages = (recPages) => {
+        recPages.forEach((recPage) => {
+          let params = {
+            $fk_id: fkId,
+            $page_number: recPage.pageNumber,
+            $page_data: BRC3Sensor.encodeProto(recPage, "RecordingPage")
+          };
 
-        dbRun(INSERT_REC_PAGE, params).catch((e) => {
-          console.error(e);
-        });
+          dbRun(INSERT_REC_PAGE, params).catch((e) => {
+            console.error(e);
+          });
+        })
 
-        sampler.sample(pageNum);
+        sampler.sample(recPages[0].pageNumber);
       };
 
-      return sensor.downloadRecording(recInfo, handlePage, startPage, false);
+      if (startPage === recInfo.numPages) {
+        return Promise.resolve();
+      }
+
+      return sensor.downloadRecording(recInfo, handlePages, startPage, false);
     }).catch((e) => {
       throw(e);
     });

@@ -476,46 +476,27 @@ sensor.clearAllRecordings().then(() => {
 });
 ```
 
-### downloadRecording(recInfo, onPage [, startPage])
+### downloadRecording(recInfo, onPages [, startPage])
 
-Download pages of recording data. _Use this method only if you intend to process the downloaded data yourself. Otherwise, use the download() method of the BiostampDb class, described below._
+Download pages of unprocessed recording data. _Use this method only if you intend to process the downloaded data yourself. Otherwise, use the download() method of the BiostampDb class, described below._
 
   * **recInfo**: A recording info object obtained via `getRecordingInfo()` or `listRecordings()`.
-  * **onPage(pageNum, pageData)**: A function to handle a recording page.
+  * **onPages(pages)**: A function to handle a batch of unprocessed recording pages.
   * **startPage**: The first page to download (default is 0).
 
 ``` javascript
-let pages = [];
+sensor.downloadRecording(recInfo, (pages) => {
+  let firstPageNum = pages[0].pageNumber;
+  let lastPageNum = pages[pages.length - 1].pageNumber;
 
-sensor.downloadRecording(recInfo, (pageNum, pageData) => {
-  console.log(`Received page ${pageNum} of ${recInfo.numPages}`);
-  pages.push(pageData);
+  console.log(`Received pages ${firstPageNum}-${lastPageNum} of ${recInfo.numPages}`);
+  ...
 }).then(() => {
   console.log(pages);
 });
 ```
 
 If a download is interrupted, you can resume the operation by starting again with a page number greater than zero.
-
-The contents of each page may vary. For example, a page might contain `motion` samples but no `afe4900` samples:
-
-``` javascript
-{
-  pageNumber: 104,
-  timestamp: 1584725850.9328308,
-  samplingPeriod: 0.007893085479736328,
-  motion: {
-    accelX: [ 0.038575395941734314, ...],
-    accelY: [ 0.026367992162704468, ...],
-    accelZ: [ 0.9946592599153519, ...],
-    gyroX: [ 0.47303689643740654, ...],
-    gyroY: [ 0.22888882085680962, ...],
-    gyroZ: [ 0.030518509447574615, ...]
-  }
-}
-```
-
-_Instead of downloading recording data directly, you can use the `BiostampDb` class, described below, to manage this process for you._
 
 ### uploadFirmwareImage(image)
 
@@ -616,7 +597,7 @@ console.log(sensor.serial); // BRC3ea22
 
 The `BiostampDb` class downloads recording data from a sensor, saves it to a local database and exports the data in a usable form.
 
-This class depends on [SQLite][16] in Node.js and [IndexedDB][17] in the web browser. _IndexedDB observes a [same-origin][20] policy, meaning two different origins will use two different databases._
+This class depends on [SQLite][16] in Node.js and [IndexedDB][17] in the web browser. _IndexedDB observes a [same-origin][20] policy—meaning two different origins will use two different databases—and may be subject to [storage limits][21]._
 
 ### BiostampDb([path])
 
@@ -848,3 +829,4 @@ BiostampError.RECORDING_NOT_IN_PROGRESS
 [18]: https://nodejs.org/api/buffer.html
 [19]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Uint8Array
 [20]: https://www.w3.org/Security/wiki/Same_Origin_Policy
+[21]: https://developer.mozilla.org/en-US/docs/Web/API/IndexedDB_API/Browser_storage_limits_and_eviction_criteria

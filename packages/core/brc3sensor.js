@@ -420,14 +420,16 @@ class BRC3Sensor {
       throw(new Error("Invalid recording info"));
     }
 
-    let n = startPage;
+    let firstPage = startPage;
+
+    let processPage = (page) => BRC3Sensor.processRecPage(page, recInfo);
 
     let downloadNext = () => {
       let getPages = new Promise((resolve, reject) => {
         this.recordingPagesListener = (recPages) => {
-          recPages.forEach((recPage) => {
-            pageListener(n++, processed ? BRC3Sensor.processRecPage(recPage, recInfo) : recPage);
-          });
+          pageListener(processed ? recPages.map(processPage) : recPages);
+
+          firstPage += recPages.length;
 
           resolve();
         };
@@ -435,8 +437,8 @@ class BRC3Sensor {
         setTimeout(() => reject("Download timed out"), 15000);
       });
 
-      return Promise.all([getPages, this.readRecording(recInfo.recordingId, n)]).then(() => {
-        if (n < recInfo.numPages) {
+      return Promise.all([getPages, this.readRecording(recInfo.recordingId, firstPage)]).then(() => {
+        if (firstPage < recInfo.numPages) {
           return downloadNext();
         }
       });

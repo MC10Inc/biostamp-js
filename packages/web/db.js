@@ -11,7 +11,7 @@ class BRC3WebDb {
     request.onupgradeneeded = (evt) => { 
       db = request.result;
 
-      console.log("Created DB");
+      console.log("(DB) Created database");
 
       db.createObjectStore("recordings", { keyPath: ["serial", "recordingId"] });
 
@@ -20,12 +20,12 @@ class BRC3WebDb {
     };
 
     request.onsuccess = (evt) => {
-      console.log("Opened DB");
+      console.log("(DB) Opened database");
 
       db = request.result;
 
       db.onerror = (evt) => {
-        console.log("Cannot open DB");
+        console.log("(DB) Cannot open database");
       };
     }
 
@@ -39,7 +39,7 @@ class BRC3WebDb {
       let tx = db.transaction(["recordings"], "readwrite");
 
       tx.oncomplete = (evt) => {
-        // console.log("Saved recInfo", serial, recInfo.recordingId);
+        console.log("(DB) Saved recInfo", serial, recInfo.recordingId);
         resolve();
       };
 
@@ -60,13 +60,13 @@ class BRC3WebDb {
     });
   }
 
-  _insertPage(serial, recordingId, pageNumber, recPage) {
+  _insertPages(serial, recordingId, pageNumber, recPages) {
     return new Promise((resolve, reject) => {
       let tx = db.transaction(["pages"], "readwrite");
       let os = tx.objectStore("pages");
 
       tx.oncomplete = (evt) => {
-        // console.log("Saved page", serial, recordingId, pageNumber);
+        console.log("(DB) Saved pages", serial, recordingId, pageNumber);
         resolve();
       };
 
@@ -78,7 +78,10 @@ class BRC3WebDb {
         serial,
         recordingId,
         pageNumber,
-        pageData: BRC3Sensor.encodeProto(recPage, "RecordingPage")
+        // pageData: BRC3Sensor.encodeProto(recPage, "RecordingPage")
+        pagesEncoded: recPages.map((recPage) => {
+          return BRC3Sensor.encodeProto(recPage, "RecordingPage");
+        })
       });
 
       put.onerror = (evt) => {
@@ -158,14 +161,14 @@ class BRC3WebDb {
     }).then((startPage) => {
       let sampler = new BRC3Utils.ProgressSampler(startPage, recInfo.numPages, onProgress);
 
-      let handlePage = (pageNum, recPage) => {
-        this._insertPage(sensor.serial, recInfo.recordingId, pageNum, recPage);
+      let handlePages = (recPages) => {
+        this._insertPages(sensor.serial, recInfo.recordingId, recPages[0].pageNumber, recPages);
 
-        sampler.sample(pageNum);
+        sampler.sample(recPages[0].pageNumber);
       };
 
       // TODO this resolves before the last batch of pages is inserted
-      return sensor.downloadRecording(recInfo, handlePage, startPage, false);
+      return sensor.downloadRecording(recInfo, handlePages, startPage, false);
     }).catch((e) => {
       throw(e);
     });
@@ -192,11 +195,13 @@ class BRC3WebDb {
             let req = os.get(cursor.primaryKey);
 
             req.onsuccess = (evt) => {
-              let recPage = BRC3Sensor.decodeProto(req.result.pageData, "RecordingPage");
+              req.result.pagesEncoded.forEach((pageEncoded) => {
+                let recPage = BRC3Sensor.decodeProto(pageEncoded, "RecordingPage");
 
-              onRow({
-                pageNum: req.result.pageNumber,
-                pageData: BRC3Sensor.processRecPage(recPage, recInfo)
+                onRow({
+                  pageNum: req.result.pageNumber,
+                  pageData: BRC3Sensor.processRecPage(recPage, recInfo)
+                });
               });
             };
 
