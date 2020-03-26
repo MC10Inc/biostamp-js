@@ -35,6 +35,8 @@ class BRC3WebDb {
 
     request.onerror = (evt) => {
       console.log(request.error.message);
+
+      throw(Error(request.error.message));
     };
   }
 
