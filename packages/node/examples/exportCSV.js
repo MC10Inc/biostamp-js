@@ -27,6 +27,7 @@ BiostampSensor.connect(serial, process.exit).then((sensor) => {
     let path = serial + "-" + recId + "-" + feature + ".csv";
 
     fs.writeFileSync(path, txt, "utf8");
+    console.log("Exported " + path);
   }).catch((e) => {
     console.warn(e);
   }).finally(() => {
