@@ -179,7 +179,7 @@ class BRC3WebDb {
       }
 
       return sensor.downloadRecording(recInfo, handlePages, nextPage, false).then(() => {
-        sampler.sample(recInfo.numPages);
+        sampler.sample(recInfo.numPages - 1);
 
         return Promise.resolve();
       });

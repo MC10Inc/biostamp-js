@@ -159,7 +159,11 @@ class BRC3Db {
         return Promise.resolve();
       }
 
-      return sensor.downloadRecording(recInfo, handlePages, nextPage, false);
+      return sensor.downloadRecording(recInfo, handlePages, nextPage, false).then(() => {
+        sampler.sample(recInfo.numPages - 1);
+
+        return Promise.resolve();
+      });
     }).catch((e) => {
       throw(e);
     });
