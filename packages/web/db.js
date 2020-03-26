@@ -133,8 +133,6 @@ class BRC3WebDb {
           cursor.continue();
         }
         else {
-          let i = 0;
-
           let recs = results.map((row) => {
             return {
               serial: row.serial,
@@ -144,15 +142,12 @@ class BRC3WebDb {
             };
           });
 
-          recs.forEach((rec) => {
+          Promise.all(recs.map((rec) => {
             this._getNextPage(rec.serial, rec.recordingId).then((nextPage) => {
               rec.pagesDownloaded = nextPage;
-              i++;
-
-              if (i === results.length) {
-                resolve(recs);
-              }
             });
+          })).then(() => {
+            resolve(recs);
           });
         }
       };

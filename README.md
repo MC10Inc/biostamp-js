@@ -603,7 +603,7 @@ This class depends on [SQLite][16] in Node.js and [IndexedDB][17] in the web bro
 
 Construct a BiostampDb object.
 
-  * **onReady(db)**: An optional callback to run when the database is ready.
+  * **onReady(db)**: An optional callback to run when the database is ready to access.
   * **path**: Path to the database file (Node.js only). If no path is given, a file named "biostamp.db" will be created automatically in the working directory.
 
 ``` javascript
