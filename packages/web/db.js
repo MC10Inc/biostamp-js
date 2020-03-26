@@ -134,6 +134,7 @@ class BRC3WebDb {
         }
         else {
           let i = 0;
+
           let recs = results.map((row) => {
             return {
               serial: row.serial,
@@ -202,22 +203,18 @@ class BRC3WebDb {
       return new Promise((resolve, reject) => {
         let index = os.index("pagesBySerialAndRecId");
 
-        index.openKeyCursor([serial, recId]).onsuccess = (evt) => {
+        index.openCursor([serial, recId]).onsuccess = (evt) => {
           let cursor = evt.target.result;
 
           if (cursor) {
-            let req = os.get(cursor.primaryKey);
+            cursor.value.pagesEncoded.forEach((pageEncoded) => {
+              let recPage = BRC3Sensor.decodeProto(pageEncoded, "RecordingPage");
 
-            req.onsuccess = (evt) => {
-              req.result.pagesEncoded.forEach((pageEncoded) => {
-                let recPage = BRC3Sensor.decodeProto(pageEncoded, "RecordingPage");
-
-                onRow({
-                  pageNum: req.result.pageNumber,
-                  pageData: BRC3Sensor.processRecPage(recPage, recInfo)
-                });
+              onRow({
+                pageNum: recPage.pageNumber,
+                pageData: BRC3Sensor.processRecPage(recPage, recInfo)
               });
-            };
+            });
 
             cursor.continue();
           }
