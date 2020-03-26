@@ -38,7 +38,7 @@ class BRC3WebDb {
     };
   }
 
-  _insertRec(serial, recInfo) {
+  _insertOrUpdateRec(serial, recInfo) {
     return new Promise((resolve, reject) => {
       let tx = db.transaction(["recordings"], "readwrite");
 
@@ -93,25 +93,23 @@ class BRC3WebDb {
     });
   }
 
-  _getStartPage(serial, recordingId) {
+  _getNextPage(serial, recordingId) {
     let tx = db.transaction(["pages"]);
     let os = tx.objectStore("pages");
 
     return new Promise((resolve, reject) => {
       let index = os.index("pagesBySerialAndRecId");
 
-      index.openKeyCursor([serial, recordingId], "prev").onsuccess = (evt) => {
+      index.openCursor([serial, recordingId], "prev").onsuccess = (evt) => {
         let cursor = evt.target.result;
 
         if (cursor) {
-          let req = os.get(cursor.primaryKey);
+          let { pageNumber, pagesEncoded } = cursor.value;
 
-          req.onsuccess = (evt) => {
-            resolve(req.result ? req.result.pageNumber : 0);
-          };
+          resolve(pageNumber + pagesEncoded.length);
         }
         else {
-          resolve(null);
+          resolve(0);
         }
       };
     }).catch((e) => {
@@ -135,6 +133,7 @@ class BRC3WebDb {
           cursor.continue();
         }
         else {
+          let i = 0;
           let recs = results.map((row) => {
             return {
               serial: row.serial,
@@ -144,7 +143,16 @@ class BRC3WebDb {
             };
           });
 
-          resolve(recs);
+          recs.forEach((rec) => {
+            this._getNextPage(rec.serial, rec.recordingId).then((nextPage) => {
+              rec.pagesDownloaded = nextPage;
+              i++;
+
+              if (i === results.length) {
+                resolve(recs);
+              }
+            });
+          });
         }
       };
     });
@@ -159,10 +167,10 @@ class BRC3WebDb {
   }
 
   download(sensor, recInfo, onProgress) {
-    return this._insertRec(sensor.serial, recInfo).then(() => {
-      return this._getStartPage(sensor.serial, recInfo.recordingId);
-    }).then((startPage) => {
-      let sampler = new BRC3Utils.ProgressSampler(startPage, recInfo.numPages, onProgress);
+    return this._insertOrUpdateRec(sensor.serial, recInfo).then(() => {
+      return this._getNextPage(sensor.serial, recInfo.recordingId);
+    }).then((nextPage) => {
+      let sampler = new BRC3Utils.ProgressSampler(nextPage, recInfo.numPages, onProgress);
 
       let handlePages = (recPages) => {
         this._insertPages(sensor.serial, recInfo.recordingId, recPages[0].pageNumber, recPages);
@@ -170,8 +178,11 @@ class BRC3WebDb {
         sampler.sample(recPages[0].pageNumber);
       };
 
-      // TODO this resolves before the last batch of pages is inserted
-      return sensor.downloadRecording(recInfo, handlePages, startPage, false);
+      if (nextPage === recInfo.numPages) {
+        return Promise.resolve();
+      }
+
+      return sensor.downloadRecording(recInfo, handlePages, nextPage, false);
     }).catch((e) => {
       throw(e);
     });
