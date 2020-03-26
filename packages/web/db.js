@@ -162,7 +162,7 @@ class BRC3WebDb {
     })
   }
 
-  download(sensor, recInfo, onProgress) {
+  download(sensor, recInfo, onProgress = () => null) {
     return this._insertOrUpdateRec(sensor.serial, recInfo).then(() => {
       return this._getNextPage(sensor.serial, recInfo.recordingId);
     }).then((nextPage) => {
@@ -178,7 +178,11 @@ class BRC3WebDb {
         return Promise.resolve();
       }
 
-      return sensor.downloadRecording(recInfo, handlePages, nextPage, false);
+      return sensor.downloadRecording(recInfo, handlePages, nextPage, false).then(() => {
+        sampler.sample(recInfo.numPages);
+
+        return Promise.resolve();
+      });
     }).catch((e) => {
       throw(e);
     });

@@ -122,10 +122,6 @@ let ProgressSampler = function (startPage, totalPages, onProgress) {
   };
 
   this.sample = (pageNum) => {
-    if (!onProgress) {
-      return;
-    }
-
     let n2 = pageNum;
     let t2 = Date.now();
 
