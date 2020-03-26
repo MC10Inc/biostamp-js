@@ -695,6 +695,16 @@ db.readCsv(serial, recordingId, feature).then((txt) => {
 });
 ```
 
+The outputted CSV string contains one line per sample:
+
+```
+timestamp,accelX,accelY,accelZ
+1584660192.5770874,0.03271584212779999,-0.028321176767349243,0.997589036822319
+1584660192.5850792,0.046388134360313416,-0.03662221133708954,0.9922177791595459
+1584660192.593071,0.037598803639411926,-0.03320413827896118,0.9887997061014175
+...
+```
+
 ### readJson(serial, recordingId)
 
 Read recording data as JSON. This method resolves with plain text that can be written to a file.
@@ -706,6 +716,46 @@ Read recording data as JSON. This method resolves with plain text that can be wr
 db.readJson(serial, recordingId).then((txt) => {
   ...
 });
+```
+
+The outputted JSON structure contains "pages" of samples, each with a timestamp and sampling period (the interval between samples). Each page may contain a different type of data:
+
+```
+[
+  {
+    "pageNumber": 0,
+    "timestamp": 1584725842.565857,
+    "samplingPeriod": 0.007991790771484375,
+    "motion": {
+      "accelX": [
+        0.02685628831386566,
+        0.03662221133708954,
+        0.03418073058128357,
+        ...
+      ],
+      "accelY": [
+        ...
+      ],
+      "accelZ": [
+        ...
+      ]
+    }
+  },
+  {
+    "pageNumber": 1,
+    "timestamp": 1584725842.589386,
+    "samplingPeriod": 0.0039997100830078125,
+    "afe4900": {
+      "ecg": [
+        -0.0017612457975246798,
+        -0.005420208192674636,
+        -0.0032598496778746267,
+        ...
+      ]
+    }
+  },
+  ...
+]
 ```
 
 ### delete(serial, recordingId)
