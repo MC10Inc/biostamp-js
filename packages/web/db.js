@@ -143,7 +143,7 @@ class BRC3WebDb {
           });
 
           Promise.all(recs.map((rec) => {
-            this._getNextPage(rec.serial, rec.recordingId).then((nextPage) => {
+            return this._getNextPage(rec.serial, rec.recordingId).then((nextPage) => {
               rec.pagesDownloaded = nextPage;
             });
           })).then(() => {
