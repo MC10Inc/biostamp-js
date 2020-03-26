@@ -1,6 +1,6 @@
 {
   "name": "@mc10inc/biostamp-js-web",
-  "version": "1.0.9",
+  "version": "1.0.10",
   "description": "Biostamp® 3.0 JavaScript SDK for Web BLE",
   "main": "index.js",
   "scripts": {
@@ -19,7 +19,7 @@
   },
   "homepage": "https://github.com/mc10inc/biostamp-js#readme",
   "dependencies": {
-    "@mc10inc/biostamp-js-core": "^1.0.8"
+    "@mc10inc/biostamp-js-core": "^1.0.9"
   },
   "devDependencies": {
     "webpack": "4.41.5",
