@@ -674,8 +674,7 @@ Read rows of recording data from the database. This method resolves when all row
 
 ``` javascript
 db.read(serial, recordingId, (row) => {
-  console.log(row.pageNum); // 3323
-  console.log(row.pageData); // { ... }
+  console.log(row); // { ... }
 }).then(() => {
   ...
 });
@@ -687,7 +686,7 @@ Read recording data as CSV. This method resolves with plain text that can be wri
 
   * **serial**: The sensor serial number, e.g. "BRC3ea22". This value is case-sensitive.
   * **recordingId**: The numeric recording ID, e.g. 1584919921.
-  * **feature**: The feature to export, one of "motion", "afe4900", "ad5940", "environment" or "annotation".
+  * **feature**: The feature to read, one of "motion", "afe4900", "ad5940", "environment" or "annotation".
 
 ``` javascript
 db.readCsv(serial, recordingId, feature).then((txt) => {
@@ -705,12 +704,13 @@ timestamp,accelX,accelY,accelZ
 ...
 ```
 
-### readJson(serial, recordingId)
+### readJson(serial, recordingId [, feature])
 
 Read recording data as JSON. This method resolves with plain text that can be written to a file.
 
   * **serial**: The sensor serial number, e.g. "BRC3ea22". This value is case-sensitive.
   * **recordingId**: The numeric recording ID, e.g. 1584919921.
+  * **feature**: The feature to read, one of "motion", "afe4900", "ad5940", "environment" or "annotation". If omitted, read all features.
 
 ``` javascript
 db.readJson(serial, recordingId).then((txt) => {
@@ -718,7 +718,7 @@ db.readJson(serial, recordingId).then((txt) => {
 });
 ```
 
-The outputted JSON structure contains "pages" of samples, each with a timestamp and sampling period (the interval between samples). Each page may contain a different type of data:
+The outputted JSON structure contains "pages" of samples, each with a timestamp and sampling period (the interval between samples):
 
 ```
 [

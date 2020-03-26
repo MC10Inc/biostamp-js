@@ -204,10 +204,7 @@ class BRC3Db {
 
           let recPage = BRC3Sensor.decodeProto(row.page_data, "RecordingPage");
 
-          onRow({
-            pageNum: row.page_number,
-            pageData: BRC3Sensor.processRecPage(recPage, recInfo)
-          });
+          onRow(BRC3Sensor.processRecPage(recPage, recInfo));
         };
 
         return dbEach(SELECT_PAGES, { $fk_id: fkId }, handleRow);
@@ -219,8 +216,8 @@ class BRC3Db {
     });
   }
 
-  readJson(serial, recId) {
-    return BRC3Utils.buildJson(this, serial, recId);
+  readJson(serial, recId, feature) {
+    return BRC3Utils.buildJson(this, serial, recId, feature);
   }
 
   readCsv(serial, recId, feature) {

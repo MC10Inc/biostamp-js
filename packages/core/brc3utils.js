@@ -43,11 +43,13 @@ let decodeText = (buffer) => {
   return buffer.toString("utf-8");
 };
 
-let buildJson = (db, serial, recId) => {
+let buildJson = (db, serial, recId, feature) => {
   let rows = [];
 
   let onRow = (row) => {
-    rows.push(row.pageData);
+    if (!feature || row[feature]) {
+      rows.push(row);
+    }
   };
 
   return db.read(serial, recId, onRow).then(() => {
@@ -61,8 +63,8 @@ let buildCsv = (db, serial, recId, feature) => {
   let txt = "";
 
   let onRow = (row) => {
-    if (row.pageData[feature]) {
-      pages.push(row.pageData);
+    if (row[feature]) {
+      pages.push(row);
     }
   };
 

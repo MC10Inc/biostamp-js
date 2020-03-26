@@ -45,15 +45,15 @@ node examples/listRecordings.js -s [serialNumber]
 
 ### exportJSON.js
 
-Connect to a sensor, download a recording, and export the entire recording as JSON into the working directory.
+Connect to a sensor, download a recording, and export it as JSON into the working directory. Optional feature (-f) is one of "motion", "afe4900", "ad5940", "environment" or "annotation".
 
 ``` bash
-node examples/exportJSON.js -s [serialNumber] -r [recordingId]
+node examples/exportJSON.js -s [serialNumber] -r [recordingId] -f [feature]
 ```
 
 ### exportCSV.js
 
-Connect to a sensor, download a recording, and export a data feature (e.g. "motion") as CSV into the working directory.
+Connect to a sensor, download a recording, and export it as CSV into the working directory. Required feature (-f) is one of "motion", "afe4900", "ad5940", "environment" or "annotation".
 
 ``` bash
 node examples/exportCSV.js -s [serialNumber] -r [recordingId] -f [feature]
