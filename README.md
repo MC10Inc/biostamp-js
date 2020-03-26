@@ -650,7 +650,7 @@ BiostampUtils.writeFile("recording.json", txt, "text/json");
 
 ### list()
 
-List all recordings saved in the local database.
+List all recordings saved in the local database. _Some recordings may not be fully downloaded. To determine if a recording is fully downloaded, compare the fields numPages and pagesDownloaded._
 
 ``` javascript
 db.list().then((recs) => {
