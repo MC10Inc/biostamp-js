@@ -26,14 +26,14 @@ Build JavaScript-based applications that communicate with BioStamp® 3.0 sensors
 
 ## Getting started
 
-Add the following lines to your `.npmrc` file, replacing _TOKEN_ with a GitHub personal access token:
+Create a GitHub [personal access token][22] with the `read:packages` scope for your GitHub account. Then add the following lines to your `.npmrc` file, replacing _TOKEN_ with your personal access token:
 
 ```
 @mc10inc:registry=https://npm.pkg.github.com
 //npm.pkg.github.com/:_authToken=TOKEN
 ```
 
-Then install the package corresponding to your target platform: [biostamp-js-web][13], [biostamp-js-node][14] or [biostamp-js-nordic][15]. For example:
+Finally, install the package corresponding to your target platform: [biostamp-js-web][13], [biostamp-js-node][14] or [biostamp-js-nordic][15]. For example:
 
 ```
 npm install @mc10inc/biostamp-js-node
@@ -890,3 +890,4 @@ BiostampError.RECORDING_NOT_IN_PROGRESS
 [19]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Uint8Array
 [20]: https://www.w3.org/Security/wiki/Same_Origin_Policy
 [21]: https://developer.mozilla.org/en-US/docs/Web/API/IndexedDB_API/Browser_storage_limits_and_eviction_criteria
+[22]: https://help.github.com/en/github/authenticating-to-github/creating-a-personal-access-token-for-the-command-line
