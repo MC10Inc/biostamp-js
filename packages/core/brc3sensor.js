@@ -6,12 +6,49 @@ let BRC3Utils = require("./brc3utils.js");
 
 let { Command, Request, Response } = BRC3Schema;
 
+let CallQueue = function () {
+  let i = 0;
+  let queue = [];
+
+  let next = () => {
+    let { fn, resolve, reject } = queue.shift();
+
+    if (fn) {
+      fn().then((value) => {
+        resolve(value);
+      })
+      .catch((err) => {
+        reject(err);
+      }).then(() => {
+        i--;
+
+        if (i > 0) {
+          next();
+        }
+      });
+    };
+  };
+
+  this.add = (fn) => {
+    i++;
+
+    return new Promise((resolve, reject) => {
+      queue.push({ fn, resolve, reject });
+
+      if (i === 1) {
+        next();
+      }
+    });
+  };
+};
+
 const FLASH_PAGE_BYTES = 256;
 
 class BRC3Sensor {
   constructor() {
     this.packetHandler = new BRC3PacketHandler(this.handlePayload.bind(this));
     this.streaming = new BRC3Streaming();
+    this.queue = new CallQueue();
   }
 
   request(request, dataWritePackets = undefined) {
@@ -19,7 +56,7 @@ class BRC3Sensor {
 
     console.log("request", JSON.stringify(Request.toObject(request)));
 
-    return this.execute(reqBuffer, dataWritePackets).then((respBuffer) => {
+    let fn = () => this.execute(reqBuffer, dataWritePackets).then((respBuffer) => {
       let response = Response.decode(respBuffer);
 
       console.log("response", JSON.stringify(Response.toObject(response)));
@@ -34,6 +71,8 @@ class BRC3Sensor {
 
       return Response.toObject(response);
     });
+
+    return this.queue.add(fn);
   }
 
   command(command) {

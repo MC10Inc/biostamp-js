@@ -81,14 +81,14 @@ sensor.startSensing(config).then(() => {
 });
 ```
 
-A command might be rejected for a variety of reasons, but usually because it is issued out of order or with invalid parameters. Here, calling `getTime()` generates a `BiostampError` because the time was never set:
+A command might be rejected for a variety of reasons, but usually because it is issued out of order or with invalid parameters. Here, calling `stopSensing()` generates a `BiostampError` because the sensor is not currently sensing:
 
 ``` javascript
-sensor.getTime().then((time) => {
-  console.log(time);
+sensor.stopSensing().then(() => {
+  ...
 }).catch((error) => {
-  console.log(error.message); // "There was a problem communicating with the sensor (TIME_NOT_SET)."
-  console.log(error.code); // 6
+  console.log(error.message); // "There was a problem communicating with the sensor (CANNOT_STOP)."
+  console.log(error.code); // 8
   console.log(error instanceof BiostampError); // true
 });
 ```
@@ -813,7 +813,7 @@ Save a file to the user's downloads directory. This method has no return value.
 
   * **fileName**: File name, e.g. "BRC3ea22-1584919921.json".
   * **text**: File contents as plain text.
-  * **mimeType**: Optional mime type, e.g. "text/json". Default is "text/plain"/
+  * **mimeType**: Optional mime type, e.g. "text/json". Default is "text/plain".
 
 ``` javascript
 db.readJson(serial, recInfo.recordingId).then((txt) => {

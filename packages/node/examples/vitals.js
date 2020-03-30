@@ -9,7 +9,7 @@ let argv = yargs
 
 BiostampSensor.connect(argv.serial, process.exit).then((sensor) => {
   let vitals = {
-    name: sensor.name
+    serial: sensor.serial
   };
 
   sensor.setTime().then(() => {
