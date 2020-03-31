@@ -1,6 +1,6 @@
-# Biostamp® 3.0 JavaScript SDK for Nordic
+# BioStamp3™ JavaScript SDK for Nordic
 
-Connect to BioStamp® 3.0 sensors via the [pc-ble-driver library][1] by Nordic Semiconductor.
+Connect to BioStamp3™ sensors via the [pc-ble-driver library][1] by Nordic Semiconductor.
 
 See full documentation at [https://github.com/mc10inc/biostamp-js][3].
 

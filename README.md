@@ -1,6 +1,6 @@
-# BioStamp® 3.0 JavaScript SDK
+# BioStamp3™ JavaScript SDK
 
-Build JavaScript-based applications that communicate with BioStamp® 3.0 sensors via [Bluetooth Low Energy (BLE)][1].
+Build JavaScript-based applications that communicate with BioStamp3™ sensors via [Bluetooth Low Energy (BLE)][1].
 
 ## Table of Contents
 
@@ -43,7 +43,7 @@ See [Configuring npm for use with GitHub Packages][12] for more information.
 
 ## Connecting to a sensor
 
-The `BiostampSensor` class, described below, is a [Promise][4]-based interface for communicating with a BioStamp® 3.0 sensor. Do not instantiate this class directly. Rather, use the static `connect()` method corresponding to your target platform:
+The `BiostampSensor` class, described below, is a [Promise][4]-based interface for communicating with a BioStamp3™ sensor. Do not instantiate this class directly. Rather, use the static `connect()` method corresponding to your target platform:
 
 ``` javascript
 let { BiostampSensor } = require("@mc10inc/biostamp-js-xxx");
@@ -95,7 +95,7 @@ sensor.stopSensing().then(() => {
 
 ## BiostampSensor
 
-The `BiostampSensor` class is a [Promise][4]-based interface for communicating with a BioStamp® 3.0 sensor. Do not instantiate this class directly. Rather, use the static `connect()` method corresponding to your target platform:
+The `BiostampSensor` class is a [Promise][4]-based interface for communicating with a BioStamp3™ sensor. Do not instantiate this class directly. Rather, use the static `connect()` method corresponding to your target platform:
 
 ### connect(serialPrefix, onDisconnect)
 

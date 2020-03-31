@@ -1,6 +1,6 @@
-# Biostamp® 3.0 JavaScript SDK for Node.js
+# BioStamp3™ JavaScript SDK for Node.js
 
-Connect to BioStamp® 3.0 sensors via Node.js.
+Connect to BioStamp3™ sensors via Node.js.
 
 See full documentation at [https://github.com/mc10inc/biostamp-js][3].
 
