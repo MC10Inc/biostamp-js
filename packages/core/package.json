@@ -1,6 +1,6 @@
 {
   "name": "@mc10inc/biostamp-js-core",
-  "version": "1.0.12",
+  "version": "1.0.13",
   "description": "Biostamp® 3.0 JavaScript SDK Core",
   "main": "index.js",
   "scripts": {
@@ -14,7 +14,7 @@
   "author": "MC10, Inc.",
   "license": "SEE LICENSE IN LICENSE.md",
   "dependencies": {
-    "@mc10inc/biostamp-js-db": "^1.0.2",
+    "@mc10inc/biostamp-js-db": "^1.0.3",
     "protobufjs": "^6.8.9"
   },
   "bugs": {

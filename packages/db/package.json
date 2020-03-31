@@ -1,6 +1,6 @@
 {
   "name": "@mc10inc/biostamp-js-db",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "Biostamp® 3.0 JavaScript SDK DB Module",
   "main": "index.js",
   "scripts": {
