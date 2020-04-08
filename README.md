@@ -55,6 +55,17 @@ BiostampSensor.connect(...).then((sensor) => {
 });
 ```
 
+To connect to another sensor at the same time, wait for the first connection to resolve:
+
+``` javascript
+BiostampSensor.connect(...).then((sensor1) => {
+  BiostampSensor.connect(...).then((sensor2) => {
+    sensor1.blinkLeds();
+    sensor2.blinkLeds();
+  });
+})
+```
+
 ## Issuing sensor commands
 
 Commands can be issued one at a time after connecting to a sensor. Some commands, such as `getTemperature()`, return a payload when they resolve:

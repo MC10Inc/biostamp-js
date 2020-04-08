@@ -10,14 +10,10 @@ const BRC3_DATA_UUID = "de77100390e111e89a5a34f39a69480c";
 
 class NodeSensor extends BRC3Sensor {
   static connect(serial, onDisconnect) {
-    noble.on("stateChange", (state) => {
-      if (state === "poweredOn") {
-        noble.startScanning();
-      }
-    });
+    noble.startScanning();
 
     return new Promise((resolve, reject) => {
-      noble.on("discover", (peripheral) => {
+      let discover = (peripheral) => {
         let adv = peripheral.advertisement || {};
         console.log(adv.localName || "[No name]");
 
@@ -26,6 +22,7 @@ class NodeSensor extends BRC3Sensor {
 
         if (isBRC3Sensor && isSerialMatch) {
           noble.stopScanning();
+          noble.off("discover", discover);
 
           peripheral.once("disconnect", onDisconnect);
 
@@ -49,7 +46,9 @@ class NodeSensor extends BRC3Sensor {
             });
           });
         }
-      });
+      };
+
+      noble.on("discover", discover);
     });
   }
 

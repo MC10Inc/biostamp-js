@@ -91,6 +91,14 @@ List all recordings downloaded into the local database.
 node examples/dbList.js
 ```
 
+### multi.js
+
+Connect to two sensors and blink simultaneously.
+
+```
+node examples/multi.js -s [serialNumber1],[serialNumber2]
+```
+
 [1]: https://github.com/abandonware/noble
 [2]: https://github.com/abandonware/noble#prerequisites
 [3]: https://github.com/mc10inc/biostamp-js
