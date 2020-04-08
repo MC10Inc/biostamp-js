@@ -63,7 +63,7 @@ BiostampSensor.connect(...).then((sensor1) => {
     sensor1.blinkLeds();
     sensor2.blinkLeds();
   });
-})
+});
 ```
 
 ## Issuing sensor commands
