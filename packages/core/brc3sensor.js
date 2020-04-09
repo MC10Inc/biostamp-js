@@ -210,7 +210,7 @@ class BRC3Sensor {
 
   countRecordings() {
     return this.command(Command.RECORDING_GET_COUNT).then((response) => {
-      return response.recordingGetCount.count;
+      return response.recordingGetCount.count || 0;
     });
   }
 
