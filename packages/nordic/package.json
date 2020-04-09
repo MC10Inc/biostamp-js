@@ -1,6 +1,6 @@
 {
   "name": "@mc10inc/biostamp-js-nordic",
-  "version": "1.0.14",
+  "version": "1.0.15",
   "description": "Biostamp® 3.0 JavaScript SDK for Nordic",
   "main": "index.js",
   "scripts": {
