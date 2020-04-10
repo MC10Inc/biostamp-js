@@ -576,6 +576,26 @@ sensor.uploadFirmwareImage(image).then(() => {
 });
 ```
 
+### getFaultLogs()
+
+Get a list of faults. Faults are generated when the sensor's firmware encounters a fatal error condition that causes the sensor to reset, or when the sensor turns off due to a low battery. These logs may be sent to MC10 to assist in troubleshooting.
+
+``` javascript
+sensor.getFaultLogs().then((logs) => {
+  console.log(logs);
+});
+```
+
+### cleartFaultLogs()
+
+Clear all faults.
+
+``` javascript
+sensor.clearFaultLogs().then(() => {
+  ...
+});
+```
+
 ### reset()
 
 Reset and disconnect from the sensor.
