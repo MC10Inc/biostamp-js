@@ -42,7 +42,9 @@ BiostampSensor.connect(argv.serial, process.exit).then((sensor) => {
     vitals.pressure = pressure;
 
     console.log(vitals);
-
+  }).catch((err) => {
+    console.error(err.message);
+  }).finally(() => {
     sensor.disconnect();
   });
 });

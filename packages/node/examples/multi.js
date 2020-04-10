@@ -18,6 +18,8 @@ BiostampSensor.connect(serial1, () => null).then((sensor1) => {
     sensor1.disconnect();
     sensor2.disconnect();
   });
-}).then(() => {
+}).catch((err) => {
+  console.error(err.message);
+}).finally(() => {
   process.exit();
 });

@@ -15,6 +15,8 @@ BiostampSensor.connect(argv.serial, process.exit).then((sensor) => {
       console.log("Loading firmware ...");
 
       return sensor.loadFirmwareImage();
+    }).catch((err) => {
+      console.error(err.message);
     }).then(() => {
       console.log("Loaded firmware");
 

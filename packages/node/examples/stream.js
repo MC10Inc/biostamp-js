@@ -39,5 +39,9 @@ BiostampSensor.connect(argv.serial, process.exit).then((sensor) => {
         sensor.disconnect();
       });
     }, 5000);
+  }).catch((err) => {
+    console.error(err.message);
+
+    sensor.disconnect();
   });
 });

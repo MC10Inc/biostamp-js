@@ -10,7 +10,9 @@ let argv = yargs
 BiostampSensor.connect(argv.serial, process.exit).then((sensor) => {
   sensor.listRecordings().then((recordings) => {
     console.log(recordings);
-
+  }).catch((err) => {
+    console.error(err.message);
+  }).finally(() => {
     sensor.disconnect();
   });
 });

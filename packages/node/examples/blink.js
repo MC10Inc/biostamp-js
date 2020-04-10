@@ -8,7 +8,11 @@ let argv = yargs
   .argv;
 
 BiostampSensor.connect(argv.serial, process.exit).then((sensor) => {
-  sensor.blinkLeds().then((resp) => {
+  sensor.blinkLeds().then(() => {
+    // ...
+  }).catch((err) => {
+    console.error(err.message);
+  }).finally(() => {
     sensor.disconnect();
   });
 });
