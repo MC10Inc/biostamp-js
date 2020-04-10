@@ -411,7 +411,7 @@ Start streaming data while the sensor is sensing. _This method should be called 
 ``` javascript
 sensor.startStreaming(BiostampSensor.StreamingType.MOTION, (packet, ts) => {
   console.log(packet); // [[0.06787316501140594, ...], ...]
-  console.log(ts); // [2020-01-24T22:55:04.079Z, ...]
+  console.log(ts); // [1586525371.1465697, ...]
 }).then(() => {
   ...
 });

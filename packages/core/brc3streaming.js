@@ -178,7 +178,7 @@ class BRC3Streaming {
     let dt = ss.samplingPeriod * info.samplingPeriodScale;
 
     for (let i = 0; i < n; i++) {
-      ts[i] = new Date((t0 + (i * dt)) * 1000);
+      ts[i] = t0 + (i * dt);
     }
 
     return ts;
