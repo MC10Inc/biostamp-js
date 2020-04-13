@@ -17,10 +17,9 @@ class NodeSensor extends BRC3Sensor {
         let adv = peripheral.advertisement || {};
         console.log(adv.localName || "[No name]");
 
-        let isBRC3Sensor = (adv.manufacturerData || "").toString("hex") === "ca0030";
         let isSerialMatch = (adv.localName || "").toLowerCase() === serial.toLowerCase();
 
-        if (isBRC3Sensor && isSerialMatch) {
+        if (isSerialMatch) {
           noble.stopScanning();
           noble.off("discover", discover);
 
