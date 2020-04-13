@@ -580,9 +580,9 @@ class BRC3Sensor {
       processSeries(obj.motion.accelX, scales.accelGScale);
       processSeries(obj.motion.accelY, scales.accelGScale);
       processSeries(obj.motion.accelZ, scales.accelGScale);
-      processSeries(obj.motion.gyroX, scales.gyroDpsScale);
-      processSeries(obj.motion.gyroY, scales.gyroDpsScale);
-      processSeries(obj.motion.gyroZ, scales.gyroDpsScale);
+      processSeries(obj.motion.gyroX || [], scales.gyroDpsScale);
+      processSeries(obj.motion.gyroY || [], scales.gyroDpsScale);
+      processSeries(obj.motion.gyroZ || [], scales.gyroDpsScale);
     }
     else if (obj.afe4900) {
       processSeries(obj.afe4900.ecg || [], scales.afe4900EcgVScale);

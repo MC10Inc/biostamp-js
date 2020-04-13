@@ -406,7 +406,7 @@ sensor.stopSensing().then((recordingId) => {
 Start streaming data while the sensor is sensing. _This method should be called only while sensing. Streams are destroyed automatically when sensing stops._
 
   * **type**: The streaming type, one of `BiostampSensor.StreamingType.MOTION`, `BiostampSensor.StreamingType.AFE4900`, `BiostampSensor.StreamingType.ENVIRONMENT` or `BiostampSensor.StreamingType.AD5940`.
-  * **handlePacket(packet, ts)**: A function to handle a packet array and a corresponding timestamp array. Each entry in `packet` is either a number or an array of numbers, depending on the streaming type.
+  * **handlePacket(packet, ts)**: A function to handle a packet array and a corresponding timestamp array. Each entry in `packet` is either a number or an array of numbers, depending on the streaming type. _Timestamps are UTC seconds with microsecond precision._
 
 ``` javascript
 sensor.startStreaming(BiostampSensor.StreamingType.MOTION, (packet, ts) => {
@@ -735,6 +735,8 @@ timestamp,accelX,accelY,accelZ
 ...
 ```
 
+_Timestamps are UTC seconds with microsecond precision._
+
 ### readJson(serial, recordingId [, feature])
 
 Read recording data as JSON. This method resolves with plain text that can be written to a file.
@@ -788,6 +790,8 @@ The outputted JSON structure contains "pages" of samples, each with a timestamp 
   ...
 ]
 ```
+
+_Timestamps are UTC seconds with microsecond precision._
 
 ### delete(serial, recordingId)
 
