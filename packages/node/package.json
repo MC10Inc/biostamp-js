@@ -1,6 +1,6 @@
 {
   "name": "@mc10inc/biostamp-js-node",
-  "version": "1.0.22",
+  "version": "1.0.23",
   "description": "Biostamp® 3.0 JavaScript SDK for Node.js",
   "main": "index.js",
   "scripts": {
@@ -27,5 +27,6 @@
   "bugs": {
     "url": "https://github.com/mc10inc/biostamp-js/issues"
   },
-  "homepage": "https://github.com/mc10inc/biostamp-js#readme"
+  "homepage": "https://github.com/mc10inc/biostamp-js#readme",
+  "gitHead": "01c0a1cd4bb56e7745efc108c8dab083ebcb31d2"
 }
