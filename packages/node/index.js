@@ -2,6 +2,9 @@ let { BRC3Sensor, BRC3Error, BRC3Utils } = require("@mc10inc/biostamp-js-core");
 let { BRC3Db } = require("@mc10inc/biostamp-js-db");
 
 let noble = require("@abandonware/noble");
+let BitSet = require("bitset");
+
+const BRC3_MC10_ID = Buffer.from([0xca, 0x00, 0x30]);
 
 const BRC3_SERVICE_UUID = "de77100090e111e89a5a34f39a69480c";
 const BRC3_COMMAND_UUID = "de77100190e111e89a5a34f39a69480c";
@@ -14,19 +17,30 @@ class NodeSensor extends BRC3Sensor {
 
     return new Promise((resolve, reject) => {
       let discover = (peripheral) => {
-        let adv = peripheral.advertisement || {};
-        console.log(adv.localName || "[No name]");
+        let adv = peripheral.advertisement;
 
-        let isSerialMatch = (adv.localName || "").toLowerCase() === serial.toLowerCase();
+        if (!adv) {
+          return;
+        }
 
-        if (isSerialMatch) {
+        let localName = adv.localName || "";
+        let advertIdBytes = adv.manufacturerData.slice(0, 3);
+        let advertDataBytes = adv.manufacturerData.slice(3);
+        let isSerialMatch = localName.toLowerCase() === serial.toLowerCase();
+        let isBiostamp = advertIdBytes.equals(BRC3_MC10_ID);
+
+        if (isBiostamp) {
+          console.log("[disovered " + localName + "]", NodeSensor.decodeAdvertData(advertDataBytes));
+        }
+
+        if (isBiostamp && isSerialMatch) {
           noble.stopScanning();
           noble.off("discover", discover);
 
           peripheral.once("disconnect", onDisconnect);
 
           peripheral.connect((error) => {
-            console.log("[connected " + adv.localName + "]");
+            console.log("[connected " + localName + "]");
 
             peripheral.discoverAllServicesAndCharacteristics((error, services, chars) => {
               let commandChar = chars.find((char) => {
@@ -49,6 +63,28 @@ class NodeSensor extends BRC3Sensor {
 
       noble.on("discover", discover);
     });
+  }
+
+  static decodeAdvertData(advertDataBytes) {
+    let bs = new BitSet(advertDataBytes);
+
+    try {
+      return {
+        version: bs.slice(0, 3).data[0],
+        batteryPercent: bs.slice(4, 10).data[0],
+        fullyCharged: !!bs.get(11),
+        charging: !!bs.get(12),
+        sensingEnabled: !!bs.get(13),
+        recordingEnabled: !!bs.get(14),
+        freeSpace: bs.slice(15, 26).data[0],
+        recordingsEmpty: !!bs.get(27),
+        hardwareFault: !!bs.get(28),
+        faultLogged: !!bs.get(29)
+      };
+    }
+    catch (e) {
+      return {};
+    }
   }
 
   constructor(peripheral, commandChar, dataChar, responseChar) {
