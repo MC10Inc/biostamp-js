@@ -325,6 +325,7 @@ message AFE4900Samples {
     repeated sint32 ecg = 1;
     repeated sint32 ppg = 2;
     repeated sint32 ambient = 3;
+    repeated sint32 ppg_ir = 4;
 }
 
 message EnvironmentSamples {
@@ -400,6 +401,7 @@ enum AFE4900Mode {
     ECG = 1;
     PPG = 2;
     PTT = 3;
+    SPO2 = 4;
 }
 
 enum AFE4900ECGGain {
@@ -554,6 +556,7 @@ enum FaultType {
     WATCHDOG = 5;
     WATCHDOG_TASK = 6;
     TASK_STACK_OVERFLOW = 7;
+    BATTERY_DEAD = 8;
 }
 
 message FaultAppError {
