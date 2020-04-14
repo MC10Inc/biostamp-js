@@ -65,14 +65,14 @@ class BRC3Streaming {
 
     let info = this.infos[type];
 
-    if (afe.ecg && afe.ppg) {
+    if (afe.ecg.length > 0 && afe.ppg.length > 0) {
       let ecg = this.getDifferentialArray(afe.ecg, info.afe4900EcgVScale);
       let ppg = this.getDifferentialArray(afe.ppg, 1);
       let ts = this.getTimestamps(info, ss, ecg.length);
 
       listener(this.zip([ecg, ppg]), ts);
     }
-    else if (afe.ecg) {
+    else if (afe.ecg.length > 0) {
       let ecg = this.getDifferentialArray(afe.ecg, info.afe4900EcgVScale);
       let ts = this.getTimestamps(info, ss, ecg.length);
 
@@ -98,7 +98,7 @@ class BRC3Streaming {
     }
 
     let samples = [];
-  
+
     for (let i = 0; i < environment.pascals.length; i++) {
       samples.push({
         pascals: environment.pascals[i],
