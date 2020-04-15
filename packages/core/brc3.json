@@ -1073,6 +1073,18 @@
         "offdacScale": {
           "type": "AFE4900OffdacScale",
           "id": 6
+        },
+        "tiaGainIr": {
+          "type": "AFE4900TIAGain",
+          "id": 7
+        },
+        "ledCurrentIr": {
+          "type": "uint32",
+          "id": 8
+        },
+        "offdacCurrentIr": {
+          "type": "int32",
+          "id": 9
         }
       }
     },

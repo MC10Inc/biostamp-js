@@ -456,6 +456,9 @@ message AFE4900Dynamic {
     bool photodiode_disconnect = 4;
     int32 offdac_current_ambient = 5;
     AFE4900OffdacScale offdac_scale = 6;
+    AFE4900TIAGain tia_gain_ir = 7;
+    uint32 led_current_ir = 8;
+    int32 offdac_current_ir = 9;
 }
 
 message AFE4900Config {
