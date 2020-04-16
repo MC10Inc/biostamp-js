@@ -587,6 +587,8 @@ class BRC3Sensor {
     else if (obj.afe4900) {
       processSeries(obj.afe4900.ecg || [], scales.afe4900EcgVScale);
       processSeries(obj.afe4900.ppg || [], 1);
+      processSeries(obj.afe4900.ambient || [], 1);
+      processSeries(obj.afe4900.ppgIr || [], 1);
     }
     else if (obj.annotation) {
       obj.annotation = BRC3Utils.decodeText(obj.annotation.annotationData);
