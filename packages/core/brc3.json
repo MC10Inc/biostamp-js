@@ -1105,6 +1105,10 @@
         "photodiode": {
           "type": "AFE4900Photodiode",
           "id": 4
+        },
+        "samplingPeriodUs": {
+          "type": "uint32",
+          "id": 5
         }
       }
     },

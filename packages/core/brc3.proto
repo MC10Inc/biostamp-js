@@ -466,6 +466,7 @@ message AFE4900Config {
     AFE4900ECGGain ecg_gain = 2;
     AFE4900Color color = 3;
     AFE4900Photodiode photodiode = 4;
+    uint32 sampling_period_us = 5;
 }
 
 enum EnvironmentMode {
