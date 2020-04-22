@@ -1243,7 +1243,8 @@
             "afe4900",
             "ad5940",
             "environment",
-            "annotation"
+            "annotation",
+            "afe4900Dynamic"
           ]
         }
       },
@@ -1279,6 +1280,10 @@
         "annotation": {
           "type": "Annotation",
           "id": 8
+        },
+        "afe4900Dynamic": {
+          "type": "AFE4900Dynamic",
+          "id": 9
         }
       }
     },

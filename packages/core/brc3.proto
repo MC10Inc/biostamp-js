@@ -532,6 +532,7 @@ message RecordingPage {
         AD5940Samples ad5940 = 6;
         EnvironmentSamples environment = 7;
         Annotation annotation = 8;
+        AFE4900Dynamic afe4900_dynamic = 9;
     }
 }
 
