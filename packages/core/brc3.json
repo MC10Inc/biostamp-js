@@ -791,6 +791,11 @@
           "rule": "repeated",
           "type": "sint32",
           "id": 3
+        },
+        "ppgIr": {
+          "rule": "repeated",
+          "type": "sint32",
+          "id": 4
         }
       }
     },
@@ -989,7 +994,8 @@
         "AFE4900_MODE_UNDEFINED": 0,
         "ECG": 1,
         "PPG": 2,
-        "PTT": 3
+        "PTT": 3,
+        "SPO2": 4
       }
     },
     "AFE4900ECGGain": {
@@ -1067,6 +1073,18 @@
         "offdacScale": {
           "type": "AFE4900OffdacScale",
           "id": 6
+        },
+        "tiaGainIr": {
+          "type": "AFE4900TIAGain",
+          "id": 7
+        },
+        "ledCurrentIr": {
+          "type": "uint32",
+          "id": 8
+        },
+        "offdacCurrentIr": {
+          "type": "int32",
+          "id": 9
         }
       }
     },
@@ -1087,6 +1105,10 @@
         "photodiode": {
           "type": "AFE4900Photodiode",
           "id": 4
+        },
+        "samplingPeriodUs": {
+          "type": "uint32",
+          "id": 5
         }
       }
     },
@@ -1221,7 +1243,8 @@
             "afe4900",
             "ad5940",
             "environment",
-            "annotation"
+            "annotation",
+            "afe4900Dynamic"
           ]
         }
       },
@@ -1257,6 +1280,10 @@
         "annotation": {
           "type": "Annotation",
           "id": 8
+        },
+        "afe4900Dynamic": {
+          "type": "AFE4900Dynamic",
+          "id": 9
         }
       }
     },
@@ -1290,7 +1317,8 @@
         "HARD_FAULT": 4,
         "WATCHDOG": 5,
         "WATCHDOG_TASK": 6,
-        "TASK_STACK_OVERFLOW": 7
+        "TASK_STACK_OVERFLOW": 7,
+        "BATTERY_DEAD": 8
       }
     },
     "FaultAppError": {
