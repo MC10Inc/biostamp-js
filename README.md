@@ -442,31 +442,6 @@ sensor.annotate("start_walking").then((timestamp) => {
 });
 ```
 
-### afe4900DynamicConfig(config)
-
-Apply dynamic settings during AFE900 sensing (PPG and PTT modes only).
-
-  * **config**: A configuration object in the form `{ ledCurrent, offDacCurrent, offDacCurrentAmbient, offDacScale, tiaGain, photodiodeDisconnect }`.
-
-```javascript
-sensor.afe4900DynamicConfig(config).then(() => {
-  ...
-});
-```
-
-The pseudo-code below shows all the supported values:
-
-```
-{
-  ledCurrent: (0...255),
-  offdacCurrent: (-127...127),
-  offdacCurrentAmbient: (-127...127),
-  offdacScale: BiostampSensor.AFE4900OffdacScale.OFFDAC_SCALE_(1X|2X|4X|8X),
-  tiaGain: BiostampSensor.AFE4900TIAGain.TIA_GAIN_(10|25|50|100|250|500|1500|2000)KOHM
-  photodiodeDisconnect: (true|false)
-}
-```
-
 ### clearOldestRecording()
 
 Clear the oldest recording stored on the sensor. _This command cannot be issued while recording._
