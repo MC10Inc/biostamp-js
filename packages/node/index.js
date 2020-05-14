@@ -17,30 +17,16 @@ class NodeSensor extends BRC3Sensor {
 
     return new Promise((resolve, reject) => {
       let discover = (peripheral) => {
-        let adv = peripheral.advertisement;
+        let advert = NodeSensor.parseAdvert(peripheral.advertisement);
 
-        if (!adv) {
-          return;
-        }
-
-        let localName = adv.localName || "";
-        let advertIdBytes = adv.manufacturerData.slice(0, 3);
-        let advertDataBytes = adv.manufacturerData.slice(3);
-        let isSerialMatch = localName.toLowerCase() === serial.toLowerCase();
-        let isBiostamp = advertIdBytes.equals(BRC3_MC10_ID);
-
-        if (isBiostamp) {
-          console.log("[disovered " + localName + "]", NodeSensor.decodeAdvertData(advertDataBytes));
-        }
-
-        if (isBiostamp && isSerialMatch) {
+        if (advert.serial.toLowerCase() === serial.toLowerCase()) {
           noble.stopScanning();
           noble.off("discover", discover);
 
           peripheral.once("disconnect", onDisconnect);
 
           peripheral.connect((error) => {
-            console.log("[connected " + localName + "]");
+            console.log("[connected " + advert.serial + "]");
 
             peripheral.discoverAllServicesAndCharacteristics((error, services, chars) => {
               let commandChar = chars.find((char) => {
@@ -63,6 +49,28 @@ class NodeSensor extends BRC3Sensor {
 
       noble.on("discover", discover);
     });
+  }
+
+  static parseAdvert(advert) {
+    if (advert && advert.manufacturerData) {
+      let serial = advert.localName || "";
+      let advertIdBytes = advert.manufacturerData.slice(0, 3);
+      let advertDataBytes = advert.manufacturerData.slice(3);
+      let isBiostamp = advertIdBytes.equals(BRC3_MC10_ID);
+
+      if (isBiostamp) {
+        let data = NodeSensor.decodeAdvertData(advertDataBytes);
+
+        console.log("[discovered " + serial + "]", data);
+
+        return { serial, data };
+      }
+    }
+
+    return {
+      serial: "",
+      data: {}
+    };
   }
 
   static decodeAdvertData(advertDataBytes) {
