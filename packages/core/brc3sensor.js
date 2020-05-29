@@ -133,8 +133,23 @@ class BRC3Sensor {
     });
   }
 
-  blinkLeds() {
-    return this.command(Command.BLINK_LEDS).then((response) => {
+  blinkLeds(blinkPattern, stepTimeMs = 500, repeats = 1) {
+    let config = undefined;
+
+    if (blinkPattern) {
+      config = {
+        blinkPattern,
+        stepTimeMs,
+        repeats
+      };
+    }
+
+    let request = Request.fromObject({
+      command: Command.BLINK_LEDS,
+      blinkLeds: config
+    });
+
+    return this.request(request).then((response) => {
       return null;
     });
   }

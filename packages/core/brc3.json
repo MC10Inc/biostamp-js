@@ -458,6 +458,22 @@
         }
       }
     },
+    "BlinkLedsCommandParam": {
+      "fields": {
+        "blinkPattern": {
+          "type": "string",
+          "id": 1
+        },
+        "stepTimeMs": {
+          "type": "uint32",
+          "id": 2
+        },
+        "repeats": {
+          "type": "uint32",
+          "id": 3
+        }
+      }
+    },
     "Request": {
       "oneofs": {
         "param": {
@@ -479,7 +495,8 @@
             "afe4900DynamicConfig",
             "simulateFault",
             "annotate",
-            "faultLogRead"
+            "faultLogRead",
+            "blinkLeds"
           ]
         }
       },
@@ -559,6 +576,10 @@
         "faultLogRead": {
           "type": "FaultLogReadCommandParam",
           "id": 118
+        },
+        "blinkLeds": {
+          "type": "BlinkLedsCommandParam",
+          "id": 119
         }
       }
     },

@@ -182,7 +182,7 @@ sensor.getVersion().then((version) => {
 });
 ```
 
-### blinkLeds()
+### blinkLeds([blinkPattern [, stepTimeMs [, repeats]]])
 
 Blink the sensor LEDs.
 
@@ -190,6 +190,26 @@ Blink the sensor LEDs.
 sensor.blinkLeds().then(() => {
   ...
 });
+```
+
+The LED sequence (by default, a short green light followed by a short blue light) may be customized as follows:
+
+  * **blinkPattern**: A string, up to 16 characters long, describing the LED pattern in units of green ("G"), blue ("B"), green AND blue ("X") or neither (" "). For example, the pattern "B G " flashes blue, then pauses, then flashes green, then pauses again. You may create irregular patterns by repeating certain characters. For example, the pattern "BBBG" generates a long blue flash followed by a short green flash.
+  * **stepTimeMs**: The amount of time, in milliseconds, to sustain each unit of the pattern. Default is 500.
+  * **repeats**: The number of times to repeat the pattern. Default is 1.
+
+``` javascript
+// blink green 10 times quickly
+sensor.blinkLeds("G ", 50, 10);
+
+// blink green + blue 3 times slowly
+sensor.blinkLeds("X ", 1000, 3);
+
+// alternate green and blue 5 times moderately
+sensor.blinkLeds("GB", 250, 5);
+
+// hold green for 3 seconds
+sensor.blinkLeds("G", 3000, 1);
 ```
 
 ### getTemperature()
@@ -468,7 +488,7 @@ Download pages of unprocessed recording data. _Use this method only if you inten
 
   * **recInfo**: A recording info object obtained via `getRecordingInfo()` or `listRecordings()`.
   * **onPages(pages)**: A function to handle a batch of unprocessed recording pages.
-  * **startPage**: The first page to download (default is 0).
+  * **startPage**: The first page to download. Default is 0.
 
 ``` javascript
 sensor.downloadRecording(recInfo, (pages) => {
