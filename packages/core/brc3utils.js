@@ -137,7 +137,9 @@ let ProgressSampler = function (startPage, totalPages, onProgress) {
     let interval = rollAvg(tDelta);
     let estTimeLeft = Math.round(((pagesLeft / pagesPerInterval) * interval) / 1000);
 
-    onProgress({ pctComplete, estTimeLeft });
+    if (onProgress) {
+      onProgress({ pctComplete, estTimeLeft });
+    }
   };
 }
 
