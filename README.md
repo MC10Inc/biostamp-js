@@ -646,7 +646,7 @@ let db = new BiostampDb(() => {
 
 ### download(sensor, recInfo [, onProgress])
 
-Download a recording from a connected sensor and save it to the local database. This method resolves when all recording pages have been downloaded, at which point you can read out the entire recording from the database. _If the download is interruped for any reason, call this method again to resume where the download left off._
+Download a recording from a connected sensor and save it to the local database. This method resolves with a recording ID when all recording pages have been downloaded, at which point you can read out the entire recording from the database. _If the download is interruped for any reason, call this method again to resume where the download left off._
 
   * **sensor**: The connected sensor.
   * **recInfo**: A recording info object obtained via `sensor.getRecordingInfo()` or `sensor.listRecordings()`.
@@ -659,8 +659,8 @@ let db = new BiostampDb();
 
 sensor.getRecordingInfo(0).then((recInfo) => {
   return db.download(sensor, recInfo);
-}).then(() => {
-  return db.readJson(serial, recInfo.recordingId);
+}).then((recId) => {
+  return db.readJson(serial, recId);
 }).then((txt) => {
   fs.writeFileSync("recording.json", txt, "utf8");
 }).catch((e) => {

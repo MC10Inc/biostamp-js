@@ -177,13 +177,13 @@ class BRC3WebDb {
       };
 
       if (nextPage === recInfo.numPages) {
-        return Promise.resolve();
+        return Promise.resolve(recInfo.recordingId);
       }
 
       return sensor.downloadRecording(recInfo, handlePages, nextPage, false).then(() => {
         sampler.sample(recInfo.numPages - 1);
 
-        return Promise.resolve();
+        return Promise.resolve(recInfo.recordingId);
       });
     }).catch((e) => {
       throw(e);
