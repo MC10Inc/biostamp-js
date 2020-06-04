@@ -410,6 +410,8 @@ The pseudo-code below shows all the supported values:
 }
 ```
 
+_Do not enable ad5940 and afe4900 at the same time if afe4900 is in ECG or PTT mode._
+
 ### stopSensing()
 
 Stop sensing. This method resolves with a `recordingId` if recording is enabled in the sensing configuration.
