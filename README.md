@@ -376,7 +376,7 @@ The property `recordingEnabled` indicates whether to store data on the sensor fo
 
 The property `ad5940` is an object in the form `{ measureBaseline, mode }`.
 
-The property `afe4900` is an object in the form `{ color, ecgGain, mode, photodiode }`.
+The property `afe4900` is an object in the form `{ color, ecgGain, mode }`.
 
 The property `environment` is an object in the form `{ mode, samplingPeriodUs }`.
 
@@ -394,8 +394,7 @@ The pseudo-code below shows all the supported values:
   afe4900: {
     color: BiostampSensor.AFE4900Color.(GREEN|RED|INFRARED)
     ecgGain: BiostampSensor.AFE4900ECGGain.(GAIN_2|GAIN_3|GAIN_4|GAIN_5|GAIN_6|GAIN_9|GAIN_12),
-    mode: BiostampSensor.AFE4900Mode.(ECG|PPG|PTT),
-    photodiode: BiostampSensor.AFE4900Photodiode.(PD1|PD2)
+    mode: BiostampSensor.AFE4900Mode.(ECG|PPG|PTT)
   },
   environment: {
     mode: BiostampSensor.EnvironmentMode.ALL,
