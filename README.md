@@ -582,7 +582,7 @@ sensor.getFaultLogs().then((logs) => {
 });
 ```
 
-### cleartFaultLogs()
+### clearFaultLogs()
 
 Clear all faults.
 
